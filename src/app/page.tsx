@@ -20,26 +20,11 @@ export default function Home() {
     {
         name: "Random Name #2",
         description: "Hello World!"
-    },{
-      name: "Random Name #1",
-      description: "Probably the most random thing you have ever seen!"
-  },
-  {
-      name: "Random Name #2",
-      description: "Hello World!"
-  },{
-    name: "Random Name #1",
-    description: "Probably the most random thing you have ever seen!"
-},
-{
-    name: "Random Name #2",
-    description: "Hello World!"
-}
+    }
 ]
   
   return (
     <main className="">
-      {/* <h1 className='bg-[#1976d2] py-5 text-white'>GA Store</h1> */}
       <AppBar position="static">
         <Toolbar className='lg:flex-row flex flex-col px-32'>
           {/* <IconButton

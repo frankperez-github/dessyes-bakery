@@ -27,7 +27,7 @@ function Item(props: { item: { name: string, description: string } })
                 </CardContent>
             </CardActionArea>
             <CardActions>
-                <a href={`https://wa.me/55006336?text=${mensaje}`}>
+                <a href={`https://wa.me/+5355006336?text=${mensaje}`}>
                     <Button size="large" color="success">
                     Pedir
                     </Button>
