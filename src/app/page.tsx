@@ -6,20 +6,26 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import Item from './components/Item';
-import { AppBar, IconButton, InputBase, Toolbar, Typography, alpha, styled } from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
-import SearchIcon from '@mui/icons-material/Search';
+import { AppBar, Toolbar } from '@mui/material';
 import Image from 'next/image';
 
 export default function Home() {
   const items = [
     {
-        name: "Random Name #1",
-        description: "Probably the most random thing you have ever seen!"
+      id: 0,
+      name: "Cake",
+      description: "Cake de panetela y crema pastelera",
+      image: "/cake.jpeg",
+      price: "3000",
+      defaultQuant: 1
     },
     {
-        name: "Random Name #2",
-        description: "Hello World!"
+      id: 1,      
+      name: "Pastel",
+      description: "Pastel de hojaldre con guayaba o coco",
+      image: "/pasteles.jpeg",
+      price: "120",
+      defaultQuant: 1
     }
 ]
   
@@ -27,27 +33,9 @@ export default function Home() {
     <main className="">
       <AppBar position="static">
         <Toolbar className='lg:flex-row flex flex-col px-32'>
-          {/* <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="open drawer"
-            sx={{ mr: 2 }}
-          >
-            <MenuIcon />
-          </IconButton> */}
           <div className="w-[40%] lg:w-full mx-auto my-5 xl:ml-auto xl:mb-5">
             <Image src="/logo1(1).png" className='' height={100} width={100} alt="logo"/>
           </div>
-          {/* <Search className='my-5 lg:my-auto'>
-            <SearchIconWrapper>
-              <SearchIcon />
-            </SearchIconWrapper>
-            <StyledInputBase
-              placeholder="Search…"
-              inputProps={{ 'aria-label': 'search' }}
-            />
-          </Search> */}
         </Toolbar>
       </AppBar>
       <div className="lg:block hidden">
@@ -62,7 +50,7 @@ export default function Home() {
           {
             items.map((item, index) => (
               <SwiperSlide className='pl-10' key={index}>
-                <Item item={item} />
+                <Item item={item} quant={1}/>
               </SwiperSlide>
             ))
           }
@@ -72,7 +60,7 @@ export default function Home() {
           {
             items.map((item, index) => (
               <SwiperSlide className='pl-10' key={index}>
-                <Item item={item}/>
+                <Item item={item} quant={1}/>
               </SwiperSlide>
             ))
           }
