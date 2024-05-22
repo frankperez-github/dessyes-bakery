@@ -32,9 +32,10 @@ export default function Home() {
   return (
     <main className="">
       <AppBar position="static">
-        <Toolbar className='lg:flex-row flex flex-col px-32'>
-          <div className="w-[40%] lg:w-full mx-auto my-5 xl:ml-auto xl:mb-5">
-            <Image src="/logo1(1).png" className='' height={100} width={100} alt="logo"/>
+        <Toolbar sx={{backgroundColor: "white"}} className='lg:flex-row flex flex-col px-32'>
+          <div className="w-[85%] lg:w-full mx-auto my-5 xl:ml-auto xl:mb-5">
+            <Image src="/logo.webp" className='' height={110} width={160} alt="logo"/>
+            <h1 className='text-black text-center mt-2 text-lg'>Dessye&apos;s</h1>
           </div>
         </Toolbar>
       </AppBar>
