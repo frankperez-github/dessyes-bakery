@@ -15,7 +15,7 @@ function Item(props: {
                     })
 {   
     const [quant, setQuant] = useState(props.item.defaultQuant)
-    const mensaje = `Hola, me gustaría encargar ${quant} unida${quant > 1 && 'des'} de ${props.item.name}, por favor.\n Monto total: ${props.item.price * quant} cup`
+    const mensaje = `Hola, me gustaría encargar ${quant} unida${quant > 1 ? 'des': ''} de ${props.item.name}, por favor.\n Monto total: ${props.item.price * quant} cup`
     return (
         <Card sx={{ 
             maxWidth: "90%" ,
