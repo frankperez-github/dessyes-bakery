@@ -48,7 +48,7 @@ export default function Home() {
       name: "Dona",
       description: "Dona con glaseado de vainilla o cobertura de chocolate.",
       image: "/donas.jpeg",
-      price: "65",
+      price: "80",
       defaultQuant: 1
     }
 ]
