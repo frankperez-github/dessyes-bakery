@@ -51,6 +51,14 @@ export default function Home() {
     //   price: 80,
     //   defaultQuant: 1
     // }
+    {
+      id: 5,
+      name: "Eclair",
+      description: "Eclair relleno con crema pastelera de vainilla y bañado en cobertura de chocolate",
+      image: "/eclairs.jpeg",
+      price: 160,
+      defaultQuant: 1
+    }
 ]
   
   return (
