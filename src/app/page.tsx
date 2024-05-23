@@ -16,7 +16,7 @@ export default function Home() {
       name: "Cake",
       description: "Cake de panetela y crema pastelera.",
       image: "/cake.jpeg",
-      price: "3000",
+      price: 3000,
       defaultQuant: 1
     },
     {
@@ -24,7 +24,7 @@ export default function Home() {
       name: "Pastel",
       description: "Pastel de hojaldre con guayaba o coco.",
       image: "/pasteles.jpeg",
-      price: "60",
+      price: 60,
       defaultQuant: 1
     },
     {
@@ -32,7 +32,7 @@ export default function Home() {
       name: "Rollo de canela",
       description: "Rollo de canela con glaseado de vainilla.",
       image: "/coffecake.jpeg",
-      price: "90",
+      price: 90,
       defaultQuant: 1
     },
     {
@@ -40,17 +40,17 @@ export default function Home() {
       name: "Magdalena",
       description: "Magdalena de vainilla.",
       image: "/magdalenas.jpeg",
-      price: "65",
+      price: 65,
       defaultQuant: 1
     },
-    {
-      id: 4,      
-      name: "Dona",
-      description: "Dona con glaseado de vainilla o cobertura de chocolate.",
-      image: "/donas.jpeg",
-      price: "80",
-      defaultQuant: 1
-    }
+    // {
+    //   id: 4,      
+    //   name: "Dona",
+    //   description: "Dona con glaseado de vainilla o cobertura de chocolate.",
+    //   image: "/donas.jpeg",
+    //   price: 80,
+    //   defaultQuant: 1
+    // }
 ]
   
   return (
