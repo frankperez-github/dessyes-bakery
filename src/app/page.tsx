@@ -72,11 +72,12 @@ export default function Home() {
     let newMessage = ""
     order.products.map((prod)=>
     {
-      newMessage+= `\n${prod.name} x${prod.quantity}\n`
+      newMessage+= `\r\n${prod.name} x${prod.quantity}\r\n`
     })
-    newMessage += "\n====================="
-    newMessage+=`\nMonto Total: ${order.total}cup\n`
+    newMessage += "\r\n====================="
+    newMessage+=`\r\nMonto Total: ${order.total}cup\r\n`
     setMessage(newMessage)
+    console.log(newMessage)
   },[order])
 
   const removeFromOrder=(prod: any)=>{
