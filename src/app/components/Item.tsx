@@ -1,6 +1,6 @@
 import { Button, Card, CardActionArea, CardActions, CardContent, CardMedia, Paper, Typography } from "@mui/material";
 import {IconMinus, IconPlus} from "@tabler/icons-react"
-import { useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 function Item(props: { 
                         item: { 
@@ -11,15 +11,37 @@ function Item(props: {
                                 price: number, 
                                 defaultQuant: number 
                         }, 
-                        quant:number 
+                        quant:number,
+                        order: {
+                            "products": any[],
+                            "total": number
+                        },
+                        setOrder: any
                     })
 {   
     const [quant, setQuant] = useState(props.item.defaultQuant)
-    const mensaje = `Hola, me gustaría encargar ${quant} unida${quant > 1 ? 'des': ''} de ${props.item.name}, por favor.\n Monto total: ${props.item.price * quant} cup`
+    const addToOrder=(prod: any)=>{
+        let total = 0;
+        const newOrder =[
+            ...props.order.products.filter((product)=>product.name != prod.name), 
+            {
+                "name": prod.name,
+                "quantity": quant,
+                "price": prod.price
+            }]
+        newOrder.map((prod)=>total+=prod.price*prod.quantity)
+        props.setOrder(
+            {
+                "products": newOrder,
+                "total": total
+            }
+        )
+    }
+    
     return (
         <Card sx={{ 
             maxWidth: "90%" ,
-            borderRadius: "3%"
+            borderRadius: "0.8rem"
             }}
             className="my-20"
             >
@@ -43,11 +65,9 @@ function Item(props: {
                 </CardContent>
             </CardActionArea>
             <CardActions sx={{justifyContent: "space-evenly"}}>
-                <a href={`https://wa.me/+5350103682?text=${mensaje}`} className="border-2 rounded-lg">
-                    <Button size="large" color="success">
-                    Encargar
-                    </Button>
-                </a>
+                <Button size="large" color="success" onClick={()=>addToOrder(props.item)}>
+                    Agregar al pedido
+                </Button>
                 <div className="quantity w-24 flex ml-10 justify-between">
                     <IconMinus className="w-4" onClick={()=>setQuant(quant-1)}/>
                     <input value={quant} id="quant-info" type="number" className="w-12 text-center"/>
