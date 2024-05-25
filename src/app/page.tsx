@@ -66,7 +66,6 @@ export default function Home() {
   const [showOrder, setShowOrder] = useState(false)
   const [order, setOrder] = useState<{"products": any[], "total": number}>({"products":[], "total": 0})
   const [isLoading, setIsLoading] = useState(false)
-  const [total, setTotal] = useState(0)
   const mensaje = `${order}`
 
   const removeFromOrder=(prod: any)=>{
