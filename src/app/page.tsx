@@ -72,10 +72,10 @@ export default function Home() {
     let newMessage = ""
     order.products.map((prod)=>
     {
-      newMessage+= `\r\n${prod.name} x${prod.quantity}\r\n`
+      newMessage+= `%0a${prod.name} x${prod.quantity}%0a`
     })
-    newMessage += "\r\n====================="
-    newMessage+=`\r\nMonto Total: ${order.total}cup\r\n`
+    newMessage += "%0a====================="
+    newMessage+=`%0aMonto Total: ${order.total}cup%0a`
     setMessage(newMessage)
     console.log(newMessage)
   },[order])
