@@ -69,12 +69,12 @@ export default function Home() {
   const [message, setMessage]= useState("")
 
   useEffect(()=>{
-    let newMessage = ""
+    let newMessage = "Detalles de la orden:"
     order.products.map((prod)=>
     {
       newMessage+= `%0a🍰 ${prod.name} x${prod.quantity}`
     })
-    newMessage += "%0a_-_-_-_-_-_-_-_-_-_-_"
+    newMessage += "%0a---------------------"
     newMessage+=`%0a💰Monto Total: ${order.total}cup`
     setMessage(newMessage)
   },[order])
