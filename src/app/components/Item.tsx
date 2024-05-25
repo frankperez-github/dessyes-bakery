@@ -70,7 +70,7 @@ function Item(props: {
                 </Button>
                 <div className="quantity w-24 flex ml-10 justify-between">
                     <IconMinus className="w-4" onClick={()=>setQuant(quant-1)}/>
-                    <input value={quant} id="quant-info" type="number" className="w-12 text-center"/>
+                    <input value={quant} onChange={()=>{}} id="quant-info" type="number" className="w-12 text-center"/>
                     <IconPlus className="w-4" onClick={()=>setQuant(quant+1)}/>
                 </div>
             </CardActions>

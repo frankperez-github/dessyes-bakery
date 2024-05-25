@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Navigation, Pagination, Scrollbar, A11y } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
@@ -66,7 +66,18 @@ export default function Home() {
   const [showOrder, setShowOrder] = useState(false)
   const [order, setOrder] = useState<{"products": any[], "total": number}>({"products":[], "total": 0})
   const [isLoading, setIsLoading] = useState(false)
-  const mensaje = `${order}`
+  const [message, setMessage]= useState("")
+
+  useEffect(()=>{
+    let newMessage = ""
+    order.products.map((prod)=>
+    {
+      newMessage+= `\n${prod.name} x${prod.quantity}\n`
+    })
+    newMessage += "\n====================="
+    newMessage+=`\nMonto Total: ${order.total}cup\n`
+    setMessage(newMessage)
+  },[order])
 
   const removeFromOrder=(prod: any)=>{
     let total = 0;
@@ -124,12 +135,14 @@ export default function Home() {
             <div className="">
               <h2 className='font-bold text-xl mb-5'>Compruebe su orden:</h2>
 
-              <table className='w-full px-2 text-center mb-12'>
+              <table id='orderTable' className='w-full px-2 text-center mb-12'>
                 <thead className='text-black font-bold'>
-                  <td>Producto</td>
-                  <td>Cantidad</td>
-                  <td>Precio</td>
-                  <td></td>
+                  <tr>
+                    <td>Producto</td>
+                    <td>Cantidad</td>
+                    <td>Precio</td>
+                    <td></td>
+                  </tr>
                 </thead>
                 <tbody>
                   {order.products.map((product, key)=>{
@@ -169,7 +182,7 @@ export default function Home() {
               >
                   Cancelar
               </Button>
-              <a href={`https://wa.me/+5350103682?text=${mensaje}`} className="w-[40%] rounded-lg">
+              <a href={`https://wa.me/+5350103682?text=${message}`} className="w-[40%] rounded-lg">
                 <Button 
                   size="large" 
                   color="success" 
