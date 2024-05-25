@@ -77,7 +77,6 @@ export default function Home() {
     newMessage += "%0a_-_-_-_-_-_-_-_-_-_-_"
     newMessage+=`%0a💰Monto Total: ${order.total}cup`
     setMessage(newMessage)
-    console.log(newMessage)
   },[order])
 
   const removeFromOrder=(prod: any)=>{
