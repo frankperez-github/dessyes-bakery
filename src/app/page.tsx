@@ -19,7 +19,7 @@ export default function Home() {
       description: "Cake de panetela y crema pastelera.",
       image: "/cake.jpeg",
       price: 3000,
-      defaultQuant: 1
+      defaultQuant: 1,
     },
     {
       id: 1,      
@@ -27,7 +27,7 @@ export default function Home() {
       description: "Pastel de hojaldre con guayaba o coco.",
       image: "/pasteles.jpeg",
       price: 60,
-      defaultQuant: 1
+      defaultQuant: 1,
     },
     {
       id: 2,
@@ -35,7 +35,7 @@ export default function Home() {
       description: "Rollo de canela con glaseado de vainilla.",
       image: "/coffecake.jpeg",
       price: 90,
-      defaultQuant: 1
+      defaultQuant: 1,
     },
     {
       id: 3,      
@@ -72,10 +72,10 @@ export default function Home() {
     let newMessage = ""
     order.products.map((prod)=>
     {
-      newMessage+= `%0a${prod.name} x${prod.quantity}`
+      newMessage+= `%0a🍰 ${prod.name} x${prod.quantity}`
     })
-    newMessage += "%0a====================="
-    newMessage+=`%0aMonto Total: ${order.total}cup`
+    newMessage += "%0a_-_-_-_-_-_-_-_-_-_-_"
+    newMessage+=`%0a💰Monto Total: ${order.total}cup`
     setMessage(newMessage)
     console.log(newMessage)
   },[order])
