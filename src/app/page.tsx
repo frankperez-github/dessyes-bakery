@@ -35,7 +35,7 @@ export default function Home() {
       description: "Rollos de canela con glaseado de vainilla.",
       image: "/coffecake.jpeg",
       price: 90,
-      defaultQuant: 9,
+      defaultQuant: 8,
     },
     {
       id: 3,      
@@ -43,7 +43,7 @@ export default function Home() {
       description: "Magdalenas de vainilla.",
       image: "/magdalenas.jpeg",
       price: 65,
-      defaultQuant: 8
+      defaultQuant: 19
     },
     // {
     //   id: 4,      
