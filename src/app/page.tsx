@@ -23,27 +23,27 @@ export default function Home() {
     },
     {
       id: 1,      
-      name: "Pastel",
-      description: "Pastel de hojaldre con guayaba o coco.",
+      name: "Pasteles",
+      description: "Pasteles de hojaldre con guayaba o coco.",
       image: "/pasteles.jpeg",
       price: 60,
-      defaultQuant: 1,
+      defaultQuant: 6,
     },
     {
       id: 2,
-      name: "Rollo de canela",
-      description: "Rollo de canela con glaseado de vainilla.",
+      name: "Rollos de canela",
+      description: "Rollos de canela con glaseado de vainilla.",
       image: "/coffecake.jpeg",
       price: 90,
-      defaultQuant: 1,
+      defaultQuant: 9,
     },
     {
       id: 3,      
-      name: "Magdalena",
-      description: "Magdalena de vainilla.",
+      name: "Magdalenas",
+      description: "Magdalenas de vainilla.",
       image: "/magdalenas.jpeg",
       price: 65,
-      defaultQuant: 1
+      defaultQuant: 8
     },
     // {
     //   id: 4,      
@@ -55,11 +55,11 @@ export default function Home() {
     // }
     {
       id: 5,
-      name: "Eclair",
-      description: "Eclair relleno con crema pastelera de vainilla y bañado en cobertura de chocolate",
+      name: "Eclairs",
+      description: "Eclairs relleno con crema pastelera de vainilla y bañado en cobertura de chocolate",
       image: "/eclairs.jpeg",
       price: 160,
-      defaultQuant: 1
+      defaultQuant: 9
     },
     // {
     //   id: 6,
