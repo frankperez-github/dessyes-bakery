@@ -26,7 +26,7 @@ export default function Home() {
       name: "Pasteles",
       description: "Pasteles de hojaldre con guayaba o coco.",
       image: "/pasteles.jpeg",
-      price: 60,
+      price: 360,
       defaultQuant: 6,
     },
     {
@@ -34,7 +34,7 @@ export default function Home() {
       name: "Rollos de canela",
       description: "Rollos de canela con glaseado de vainilla.",
       image: "/coffecake.jpeg",
-      price: 90,
+      price: 720,
       defaultQuant: 8,
     },
     {
@@ -42,7 +42,7 @@ export default function Home() {
       name: "Magdalenas",
       description: "Magdalenas de vainilla.",
       image: "/magdalenas.jpeg",
-      price: 65,
+      price: 1235,
       defaultQuant: 19
     },
     // {
