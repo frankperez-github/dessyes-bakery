@@ -19,7 +19,7 @@ function Item(props: {
                         setOrder: any
                     })
 {   
-    const [quant, setQuant] = useState(props.item.defaultQuant)
+    const [quant, setQuant] = useState(1)
     const addToOrder=(prod: any)=>{
         let total = 0;
         const newOrder =[
@@ -58,6 +58,8 @@ function Item(props: {
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
                     {props.item.description}
+                    <br />
+                    {props.item.defaultQuant}  unidad{props.item.defaultQuant > 1  ? "es"  : ''}
                 </Typography>
                 <Typography gutterBottom variant="h6" className="text-[#85BB65] mt-5" component="div">
                    ${props.item.price}

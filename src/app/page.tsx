@@ -60,6 +60,30 @@ export default function Home() {
       image: "/eclairs.jpeg",
       price: 160,
       defaultQuant: 1
+    },
+    // {
+    //   id: 6,
+    //   name: "Cake Helado",
+    //   description: "Cake con capas de panetela de chocolate y helado",
+    //   image: "/IceCreamCake.jpeg",
+    //   price: 4000,
+    //   defaultQuant: 1
+    // },
+    {
+      id: 7,
+      name: "Brazo Gitano",
+      description: "Brazo gitano de panetela y nata. Cubierto con nata y cobertura de chocolate",
+      image: "/SwissRoll.jpeg",
+      price: 1500,
+      defaultQuant: 1
+    },
+    {
+      id: 8,
+      name: "Paquete de Panes suaves",
+      description: "Panes redondos, frescos y suaves.",
+      image: "/bread.jpeg",
+      price: 180,
+      defaultQuant: 9
     }
 ]
 
