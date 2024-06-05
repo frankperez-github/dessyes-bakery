@@ -34,7 +34,7 @@ export default function Home() {
       name: "Rollos de canela",
       description: "Rollos de canela con glaseado de vainilla.",
       image: "/coffecake.jpeg",
-      price: 90,
+      price: 85,
       defaultQuant: 8,
     },
     {
@@ -43,7 +43,7 @@ export default function Home() {
       description: "Magdalenas de vainilla.",
       image: "/magdalenas.jpeg",
       price: 65,
-      defaultQuant: 19
+      defaultQuant: 6
     },
     // {
     //   id: 4,      
@@ -59,7 +59,7 @@ export default function Home() {
       description: "Eclairs relleno con crema pastelera de vainilla y bañado en cobertura de chocolate",
       image: "/eclairs.jpeg",
       price: 160,
-      defaultQuant: 9
+      defaultQuant: 6
     },
     // {
     //   id: 6,
@@ -79,11 +79,11 @@ export default function Home() {
     },
     {
       id: 8,
-      name: "Paquete de Panes suaves",
-      description: "Panes redondos, frescos y suaves.",
+      name: "Pan suave",
+      description: "Pan redondo, fresco y suave.",
       image: "/bread.jpeg",
       price: 20,
-      defaultQuant: 9
+      defaultQuant: 1
     }
 ]
 

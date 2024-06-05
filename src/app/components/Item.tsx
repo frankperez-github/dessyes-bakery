@@ -29,7 +29,7 @@ function Item(props: {
                 "quantity": quant,
                 "price": prod.price
             }]
-        newOrder.map((prod)=>total+=prod.price*prod.quantity)
+        newOrder.map((prod)=>total+=prod.price*prod.quantity*prod.defaultQuant)
         props.setOrder(
             {
                 "products": newOrder,
