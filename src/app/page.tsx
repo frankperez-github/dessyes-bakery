@@ -26,7 +26,7 @@ export default function Home() {
       name: "Pasteles",
       description: "Pasteles de hojaldre con guayaba o coco.",
       image: "/pasteles.jpeg",
-      price: 360,
+      price: 60,
       defaultQuant: 6,
     },
     {
@@ -34,7 +34,7 @@ export default function Home() {
       name: "Rollos de canela",
       description: "Rollos de canela con glaseado de vainilla.",
       image: "/coffecake.jpeg",
-      price: 720,
+      price: 90,
       defaultQuant: 8,
     },
     {
@@ -42,7 +42,7 @@ export default function Home() {
       name: "Magdalenas",
       description: "Magdalenas de vainilla.",
       image: "/magdalenas.jpeg",
-      price: 1235,
+      price: 65,
       defaultQuant: 19
     },
     // {
@@ -58,7 +58,7 @@ export default function Home() {
       name: "Eclairs",
       description: "Eclairs relleno con crema pastelera de vainilla y bañado en cobertura de chocolate",
       image: "/eclairs.jpeg",
-      price: 1440,
+      price: 160,
       defaultQuant: 9
     },
     // {
@@ -82,7 +82,7 @@ export default function Home() {
       name: "Paquete de Panes suaves",
       description: "Panes redondos, frescos y suaves.",
       image: "/bread.jpeg",
-      price: 180,
+      price: 20,
       defaultQuant: 9
     }
 ]
