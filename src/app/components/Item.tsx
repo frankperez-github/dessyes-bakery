@@ -26,10 +26,10 @@ function Item(props: {
             ...props.order.products.filter((product)=>product.name != prod.name), 
             {
                 "name": prod.name,
-                "quantity": quant,
+                "quantity": quant*props.item.defaultQuant,
                 "price": prod.price
             }]
-        newOrder.map((prod)=>total+=prod.price*prod.quantity*prod.defaultQuant)
+        newOrder.map((prod)=>total+=prod.price*prod.quantity)
         props.setOrder(
             {
                 "products": newOrder,
