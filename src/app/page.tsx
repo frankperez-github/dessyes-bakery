@@ -28,7 +28,7 @@ export default function Home() {
       image: "/merengue.jpeg",
       price: 2,
       defaultQuant: 1
-    }
+    },
     {
       id: 2,
       name: "Rollos de canela",
@@ -92,7 +92,7 @@ export default function Home() {
       image: "/SwissRoll.jpeg",
       price: 1500,
       defaultQuant: 1
-    },
+    }
 ]
 
   const [showOrder, setShowOrder] = useState(false)
