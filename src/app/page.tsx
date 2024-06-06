@@ -14,12 +14,28 @@ export default function Home() {
 
   const items = [
     {
-      id: 0,
-      name: "Cake",
-      description: "Cake de panetela y crema pastelera.",
-      image: "/cake.jpeg",
-      price: 3000,
-      defaultQuant: 1,
+      id: 8,
+      name: "Pan suave",
+      description: "Pan redondo, fresco y suave.",
+      image: "/bread.jpeg",
+      price: 20,
+      defaultQuant: 1
+    },
+    {
+      id: 9,
+      name: "Merenguito",
+      description: "Merenguito.",
+      image: "/merengue.jpeg",
+      price: 2,
+      defaultQuant: 1
+    }
+    {
+      id: 2,
+      name: "Rollos de canela",
+      description: "Rollos de canela con glaseado de vainilla.",
+      image: "/coffecake.jpeg",
+      price: 85,
+      defaultQuant: 8,
     },
     {
       id: 1,      
@@ -30,20 +46,28 @@ export default function Home() {
       defaultQuant: 6,
     },
     {
-      id: 2,
-      name: "Rollos de canela",
-      description: "Rollos de canela con glaseado de vainilla.",
-      image: "/coffecake.jpeg",
-      price: 85,
-      defaultQuant: 8,
-    },
-    {
       id: 3,      
       name: "Magdalenas",
       description: "Magdalenas de vainilla.",
       image: "/magdalenas.jpeg",
       price: 65,
       defaultQuant: 6
+    },
+    {
+      id: 5,
+      name: "Eclairs",
+      description: "Eclairs relleno con crema pastelera de vainilla y bañado en cobertura de chocolate",
+      image: "/eclairs.jpeg",
+      price: 160,
+      defaultQuant: 6
+    },
+    {
+      id: 0,
+      name: "Cake",
+      description: "Cake de panetela y crema pastelera.",
+      image: "/cake.jpeg",
+      price: 3000,
+      defaultQuant: 1,
     },
     // {
     //   id: 4,      
@@ -53,14 +77,6 @@ export default function Home() {
     //   price: 80,
     //   defaultQuant: 1
     // }
-    {
-      id: 5,
-      name: "Eclairs",
-      description: "Eclairs relleno con crema pastelera de vainilla y bañado en cobertura de chocolate",
-      image: "/eclairs.jpeg",
-      price: 160,
-      defaultQuant: 6
-    },
     // {
     //   id: 6,
     //   name: "Cake Helado",
@@ -77,22 +93,6 @@ export default function Home() {
       price: 1500,
       defaultQuant: 1
     },
-    {
-      id: 8,
-      name: "Pan suave",
-      description: "Pan redondo, fresco y suave.",
-      image: "/bread.jpeg",
-      price: 20,
-      defaultQuant: 1
-    },
-    {
-      id: 9,
-      name: "Merenguito",
-      description: "Merenguito.",
-      image: "/merengue.jpeg",
-      price: 2,
-      defaultQuant: 1
-    }
 ]
 
   const [showOrder, setShowOrder] = useState(false)
