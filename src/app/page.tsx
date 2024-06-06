@@ -84,6 +84,14 @@ export default function Home() {
       image: "/bread.jpeg",
       price: 20,
       defaultQuant: 1
+    },
+    {
+      id: 9,
+      name: "Merenguito",
+      description: "Merenguito.",
+      image: "/merengue.jpeg",
+      price: 2,
+      defaultQuant: 1
     }
 ]
 
