@@ -222,7 +222,7 @@ export default function Home() {
               >
                   Cancelar
               </Button>
-              <a href={`https://wa.me/+5350103682?text=${message}`} className="w-[40%] rounded-lg">
+              <a href={`https://wa.me/+5353103058?text=${message}`} className="w-[40%] rounded-lg">
                 <Button 
                   size="large" 
                   color="success" 
