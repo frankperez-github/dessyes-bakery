@@ -92,6 +92,14 @@ export default function Home() {
       image: "/SwissRoll.jpeg",
       price: 1500,
       defaultQuant: 1
+    },
+    {
+      id: 8,
+      name: "Palmeras",
+      description: "Palmeritas de hojaldre",
+      image: "/Palmeras.jpeg",
+      price: 360,
+      defaultQuant: 6
     }
 ]
 
