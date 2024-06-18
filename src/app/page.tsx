@@ -112,7 +112,7 @@ export default function Home() {
     let newMessage = "Detalles de la orden:"
     order.products.map((prod)=>
     {
-      newMessage+= `%0a🍰 ${prod.name} x${prod.quantity}  ----> 💰${prod.quantity*prod.unitPrice}`
+      newMessage+= `%0a🍰 ${prod.name} x${prod.quantity}  ----> 💰${prod.quantity*prod.unitPrice}cup`
     })
     newMessage += "%0a---------------------"
     newMessage+=`%0a💰Monto Total: ${order.total}cup`
