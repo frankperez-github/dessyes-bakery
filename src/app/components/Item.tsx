@@ -8,7 +8,7 @@ function Item(props: {
                                 name: string, 
                                 description: string, 
                                 image: string, 
-                                price: number, 
+                                unitPrice: number, 
                                 defaultQuant: number 
                         }, 
                         quant:number,
@@ -27,9 +27,9 @@ function Item(props: {
             {
                 "name": prod.name,
                 "quantity": quant*props.item.defaultQuant,
-                "price": prod.price
+                "unitPrice": prod.unitPrice
             }]
-        newOrder.map((prod)=>total+=prod.price*prod.quantity)
+        newOrder.map((prod)=>total+=prod.unitPrice*prod.quantity)
         props.setOrder(
             {
                 "products": newOrder,
@@ -62,7 +62,7 @@ function Item(props: {
                     <span className=" font-bold">{props.item.defaultQuant}  unidad{props.item.defaultQuant > 1  ? "es"  : ''}</span>
                 </Typography>
                 <Typography gutterBottom variant="h6" className="text-[#85BB65] mt-5" component="div">
-                   ${props.item.price*props.item.defaultQuant}
+                   ${props.item.unitPrice*props.item.defaultQuant}
                 </Typography>
                 </CardContent>
             </CardActionArea>

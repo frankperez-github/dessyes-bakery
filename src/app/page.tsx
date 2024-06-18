@@ -18,7 +18,7 @@ export default function Home() {
       name: "Pan suave",
       description: "Pan redondo, fresco y suave.",
       image: "/bread.jpeg",
-      price: 20,
+      unitPrice: 20,
       defaultQuant: 1
     },
     {
@@ -26,7 +26,7 @@ export default function Home() {
       name: "Merenguito",
       description: "Merenguito.",
       image: "/merengue.jpeg",
-      price: 2,
+      unitPrice: 2,
       defaultQuant: 1
     },
     {
@@ -34,7 +34,7 @@ export default function Home() {
       name: "Rollos de canela",
       description: "Rollos de canela con glaseado de vainilla.",
       image: "/coffecake.jpeg",
-      price: 85,
+      unitPrice: 85,
       defaultQuant: 8,
     },
     {
@@ -42,7 +42,7 @@ export default function Home() {
       name: "Pasteles",
       description: "Pasteles de hojaldre con guayaba o coco.",
       image: "/pasteles.jpeg",
-      price: 60,
+      unitPrice: 60,
       defaultQuant: 6,
     },
     {
@@ -50,7 +50,7 @@ export default function Home() {
       name: "Magdalenas",
       description: "Magdalenas de vainilla.",
       image: "/magdalenas.jpeg",
-      price: 65,
+      unitPrice: 65,
       defaultQuant: 6
     },
     {
@@ -58,7 +58,7 @@ export default function Home() {
       name: "Eclairs",
       description: "Eclairs relleno con crema pastelera de vainilla y bañado en cobertura de chocolate",
       image: "/eclairs.jpeg",
-      price: 160,
+      unitPrice: 160,
       defaultQuant: 6
     },
     {
@@ -66,7 +66,7 @@ export default function Home() {
       name: "Cake",
       description: "Cake de panetela y crema pastelera.",
       image: "/cake.jpeg",
-      price: 3000,
+      unitPrice: 3000,
       defaultQuant: 1,
     },
     // {
@@ -74,7 +74,7 @@ export default function Home() {
     //   name: "Dona",
     //   description: "Dona con glaseado de vainilla o cobertura de chocolate.",
     //   image: "/donas.jpeg",
-    //   price: 80,
+    //   unitPrice: 80,
     //   defaultQuant: 1
     // }
     // {
@@ -82,7 +82,7 @@ export default function Home() {
     //   name: "Cake Helado",
     //   description: "Cake con capas de panetela de chocolate y helado",
     //   image: "/IceCreamCake.jpeg",
-    //   price: 4000,
+    //   unitPrice: 4000,
     //   defaultQuant: 1
     // },
     {
@@ -90,7 +90,7 @@ export default function Home() {
       name: "Brazo Gitano",
       description: "Brazo gitano de panetela y nata. Cubierto con nata y cobertura de chocolate",
       image: "/SwissRoll.jpeg",
-      price: 1500,
+      unitPrice: 1500,
       defaultQuant: 1
     },
     {
@@ -98,7 +98,7 @@ export default function Home() {
       name: "Palmeras",
       description: "Palmeritas de hojaldre",
       image: "/Palmeras.jpeg",
-      price: 60,
+      unitPrice: 60,
       defaultQuant: 6
     }
 ]
@@ -112,7 +112,7 @@ export default function Home() {
     let newMessage = "Detalles de la orden:"
     order.products.map((prod)=>
     {
-      newMessage+= `%0a🍰 ${prod.name} x${prod.quantity}`
+      newMessage+= `%0a🍰 ${prod.name} x${prod.quantity}  ----> 💰${prod.quantity*prod.unitPrice}`
     })
     newMessage += "%0a---------------------"
     newMessage+=`%0a💰Monto Total: ${order.total}cup`
@@ -122,7 +122,7 @@ export default function Home() {
   const removeFromOrder=(prod: any)=>{
     let total = 0;
     const newOrder =[...order.products.filter((product)=>product.name != prod.name)]
-    newOrder.map((prod)=>total+=prod.price*prod.quantity)
+    newOrder.map((prod)=>total+=prod.unitPrice*prod.quantity)
     setOrder(
         {
             "products": newOrder as any,
@@ -195,7 +195,7 @@ export default function Home() {
                           {product.quantity}
                           </td>
                           <td>
-                          {product.price * product.quantity}
+                          {product.unitPrice * product.quantity}
                           </td>
                           <td>
                             <IconTrash  onClick={()=>removeFromOrder(product)}/>
