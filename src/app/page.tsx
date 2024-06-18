@@ -98,7 +98,7 @@ export default function Home() {
       name: "Palmeras",
       description: "Palmeritas de hojaldre",
       image: "/Palmeras.jpeg",
-      price: 360,
+      price: 60,
       defaultQuant: 6
     }
 ]
