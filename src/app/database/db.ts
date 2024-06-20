@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { GridFSBucket } from "mongodb";
 
-const MONGO_URI = process.env.dbURI;
+const MONGO_URI = process.env.NEXT_PUBLIC_DB_URI;
 
 interface Connection {
     isConnected: number;
@@ -29,7 +29,7 @@ export const connect = async () => {
     }
 
     if (!MONGO_URI) {
-        throw new Error("Please define the dbURI environment variable inside .env");
+        throw new Error("Please define the NEXT_PUBLIC_DB_URI environment variable inside .env");
     }
 
     const db = await mongoose.connect(MONGO_URI);
