@@ -16,6 +16,7 @@ import items from "../../products.json"
 export default function Home() {
 
   useEffect(()=>{
+    console.log(process.env.NODE_ENV)
     console.log(process.env.NEXT_PUBLIC_DB_URI)
   },[])
 
