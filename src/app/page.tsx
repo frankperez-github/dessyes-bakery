@@ -111,6 +111,11 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false)
   const [message, setMessage]= useState("")
   
+  const [paymentMethod, setPaymentMethod] = useState("Enzona")
+  const [copiedCard, setCopiedCard] = useState(false)
+  const [copiedPhone, setCopiedPhone] = useState(false)
+
+  
   const [selectedTransportation, setSelectedTransportation] = useState<{city:string, transportation_price:number}>({city:"", transportation_price:0})
   
   useEffect(()=>{
@@ -190,8 +195,8 @@ export default function Home() {
         {
           showOrder &&
           <div className="">
-            <div className="bg-[#ffffff8a] fixed w-full h-full z-10 top-0 blur-2xl"></div>
-            <div className="OrderList flex flex-col justify-between fixed top-[20%] w-[80%] mx-[10%] z-10 bg-[#f0f0f0] p-[5%] rounded-xl">
+            <div className="bg-[#ffffffe3] fixed w-full h-full z-10 top-0"></div>
+            <div className="OrderList flex flex-col justify-between absolute top-[10%] w-[80%] mx-[10%] z-10 bg-[#f0f0f0] p-[5%] rounded-xl">
               <div className="">
                 <h2 className='font-bold text-xl mb-5'>Compruebe su orden:</h2>
 
@@ -224,14 +229,9 @@ export default function Home() {
                       )
                   })}
                     <br />
-                    <tr className=' border-[#c6c6c6]'>
-                      <br />
-                      <td>Subtotal:</td>
-                      <td className='font-bold'>${order.total}</td>
-                    </tr>
                     <tr className='border-t-2 border-[#c6c6c6]'>
-                      <td></td>
                       <td><h1>Municipio:</h1></td>
+                      <td></td>
                       <select name="" id="" onChange={(e)=>setSelectedTransportation(transportations.filter((t)=>t.city === e.target.value)[0])}>
                         <option value="">Seleccione</option>
                         {
@@ -242,18 +242,58 @@ export default function Home() {
                         }
                       </select>
                     </tr>
-                    <tr className=''>
-                      <br />
-                      <td>Precio Envio:</td>
-                      <td className='font-bold'>${selectedTransportation?.transportation_price}</td>
+                    <tr className=' border-[#c6c6c6]'>
+                      <td className='text-left'>Subtotal:</td>
+                      <td></td>
+                      <td className='font-bold text-right'>${order.total}</td>
+                    </tr>
+                    <tr >
+                      <td className='text-left'>Envio:</td>
+                      <td></td>
+                      <td className='font-bold text-right'>${selectedTransportation?.transportation_price}</td>
                     </tr>
                     <tr className=' border-[#c6c6c6]'>
-                      <br />
-                      <td>Total a pagar:</td>
-                      <td className='font-bold'>${order.total + selectedTransportation?.transportation_price}</td>
+                      <td className='text-left'>Total:</td>
+                      <td></td>
+                      <td className='font-bold text-right'>${order.total + selectedTransportation?.transportation_price}</td>
                     </tr>
                   </tbody>
                 </table>
+              </div>
+              <div className="">
+                <h2>Seleccione el metodo de pago:</h2>
+                <select name="" id="" onChange={(e)=>setPaymentMethod(e.target.value)}>
+                  <option value="Enzona">QR Enzona</option>
+                  <option value="Transfermovil">QR Transfermovil</option>
+                  <option value="Tarjeta">Número de tarjeta</option>
+                  <option value="Efectivo">Efectivo a la entrega</option>
+                </select>
+                {
+                  paymentMethod === "Tarjeta" ?
+                    <div className="my-10">
+                      <h2>Tarjeta:</h2>
+                      <div className="flex justify-evenly">
+                        <h2>9205 9598 7370 9944</h2>
+                        <button onClick={()=>{navigator.clipboard.writeText("9205 9598 7370 9944"); setCopiedCard(true); setCopiedPhone(false)}}>{copiedCard ? "✅" : "copiar"}</button>
+                      </div>
+
+                      <h2>Teléfono:</h2>
+                      <div className="flex justify-evenly">
+                        <h2>53103058</h2>
+                        <button onClick={()=>{navigator.clipboard.writeText("53103058"); setCopiedCard(false); setCopiedPhone(true)}}>{copiedPhone ? "✅" : "copiar"}</button>
+                      </div>
+                    </div>
+                  :
+                  paymentMethod === "Enzona" ?
+                    <div className="mx-auto w-2/3 my-10">
+                      <Image src="/enzona.jpeg" fill className='image' alt="QR enzona"/>
+                    </div>
+                  :
+                  paymentMethod === "Transfermovil" &&
+                    <div className="mx-auto w-2/3 my-10">
+                      <Image src="/transfermovil.jpeg" fill className='image' alt="QR enzona"/>
+                    </div>
+                }
               </div>
               
               <div className="flex justify-between w-full mt-4">
@@ -277,7 +317,10 @@ export default function Home() {
                     onClick={()=>setIsLoading(true)}
                     className='w-full bg-[#FFA500] text-black' 
                   >
-                      Listo!
+                    {
+                      paymentMethod === "Efectivo" ? "Listo!" : "Ya pagué!"
+                    }
+                      
                   </Button>
                 </a>
               </div>
