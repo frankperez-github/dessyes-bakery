@@ -9,105 +9,110 @@ import Item from './components/Item';
 import { AppBar, Toolbar, Button, CircularProgress } from '@mui/material';
 import Image from 'next/image';
 import { IconTrash } from '@tabler/icons-react';
+import items from "../../products.json"
+
+
 
 export default function Home() {
 
-  const items = [
-    {
-      id: 8,
-      name: "Pan suave",
-      description: "Pan redondo, fresco y suave.",
-      image: "/bread.jpeg",
-      unitPrice: 20,
-      defaultQuant: 1
-    },
-    {
-      id: 9,
-      name: "Merenguito",
-      description: "Merenguito.",
-      image: "/merengue.jpeg",
-      unitPrice: 2,
-      defaultQuant: 1
-    },
-    {
-      id: 2,
-      name: "Rollos de canela",
-      description: "Rollos de canela con glaseado de vainilla.",
-      image: "/coffecake.jpeg",
-      unitPrice: 85,
-      defaultQuant: 8,
-    },
-    {
-      id: 1,      
-      name: "Pasteles",
-      description: "Pasteles de hojaldre con guayaba o coco.",
-      image: "/pasteles.jpeg",
-      unitPrice: 60,
-      defaultQuant: 6,
-    },
-    {
-      id: 3,      
-      name: "Magdalenas",
-      description: "Magdalenas de vainilla.",
-      image: "/magdalenas.jpeg",
-      unitPrice: 65,
-      defaultQuant: 6
-    },
-    {
-      id: 5,
-      name: "Eclairs",
-      description: "Eclairs relleno con crema pastelera de vainilla y bañado en cobertura de chocolate",
-      image: "/eclairs.jpeg",
-      unitPrice: 160,
-      defaultQuant: 6
-    },
-    {
-      id: 0,
-      name: "Cake",
-      description: "Cake de panetela y crema pastelera.",
-      image: "/cake.jpeg",
-      unitPrice: 3000,
-      defaultQuant: 1,
-    },
-    // {
-    //   id: 4,      
-    //   name: "Dona",
-    //   description: "Dona con glaseado de vainilla o cobertura de chocolate.",
-    //   image: "/donas.jpeg",
-    //   unitPrice: 80,
-    //   defaultQuant: 1
-    // }
-    // {
-    //   id: 6,
-    //   name: "Cake Helado",
-    //   description: "Cake con capas de panetela de chocolate y helado",
-    //   image: "/IceCreamCake.jpeg",
-    //   unitPrice: 4000,
-    //   defaultQuant: 1
-    // },
-    {
-      id: 7,
-      name: "Brazo Gitano",
-      description: "Brazo gitano de panetela y nata. Cubierto con nata y cobertura de chocolate",
-      image: "/SwissRoll.jpeg",
-      unitPrice: 1500,
-      defaultQuant: 1
-    },
-    {
-      id: 8,
-      name: "Palmeras",
-      description: "Palmeritas de hojaldre",
-      image: "/Palmeras.jpeg",
-      unitPrice: 60,
-      defaultQuant: 6
-    }
-]
+//   const items = [
+//     {
+//       id: 8,
+//       name: "Pan suave",
+//       description: "Pan redondo, fresco y suave.",
+//       image: "/bread.jpeg",
+//       unitPrice: 20,
+//       defaultQuant: 1
+//     },
+//     {
+//       id: 9,
+//       name: "Merenguito",
+//       description: "Merenguito.",
+//       image: "/merengue.jpeg",
+//       unitPrice: 2,
+//       defaultQuant: 1
+//     },
+//     {
+//       id: 2,
+//       name: "Rollos de canela",
+//       description: "Rollos de canela con glaseado de vainilla.",
+//       image: "/coffecake.jpeg",
+//       unitPrice: 85,
+//       defaultQuant: 8,
+//     },
+//     {
+//       id: 1,      
+//       name: "Pasteles",
+//       description: "Pasteles de hojaldre con guayaba o coco.",
+//       image: "/pasteles.jpeg",
+//       unitPrice: 60,
+//       defaultQuant: 6,
+//     },
+//     {
+//       id: 3,      
+//       name: "Magdalenas",
+//       description: "Magdalenas de vainilla.",
+//       image: "/magdalenas.jpeg",
+//       unitPrice: 65,
+//       defaultQuant: 6
+//     },
+//     {
+//       id: 5,
+//       name: "Eclairs",
+//       description: "Eclairs relleno con crema pastelera de vainilla y bañado en cobertura de chocolate",
+//       image: "/eclairs.jpeg",
+//       unitPrice: 160,
+//       defaultQuant: 6
+//     },
+//     {
+//       id: 0,
+//       name: "Cake",
+//       description: "Cake de panetela y crema pastelera.",
+//       image: "/cake.jpeg",
+//       unitPrice: 3000,
+//       defaultQuant: 1,
+//     },
+//     // {
+//     //   id: 4,      
+//     //   name: "Dona",
+//     //   description: "Dona con glaseado de vainilla o cobertura de chocolate.",
+//     //   image: "/donas.jpeg",
+//     //   unitPrice: 80,
+//     //   defaultQuant: 1
+//     // }
+//     // {
+//     //   id: 6,
+//     //   name: "Cake Helado",
+//     //   description: "Cake con capas de panetela de chocolate y helado",
+//     //   image: "/IceCreamCake.jpeg",
+//     //   unitPrice: 4000,
+//     //   defaultQuant: 1
+//     // },
+//     {
+//       id: 7,
+//       name: "Brazo Gitano",
+//       description: "Brazo gitano de panetela y nata. Cubierto con nata y cobertura de chocolate",
+//       image: "/SwissRoll.jpeg",
+//       unitPrice: 1500,
+//       defaultQuant: 1
+//     },
+//     {
+//       id: 8,
+//       name: "Palmeras",
+//       description: "Palmeritas de hojaldre",
+//       image: "/Palmeras.jpeg",
+//       unitPrice: 60,
+//       defaultQuant: 6
+//     }
+// ]
 
   const [showOrder, setShowOrder] = useState(false)
   const [order, setOrder] = useState<{"products": any[], "total": number}>({"products":[], "total": 0})
   const [isLoading, setIsLoading] = useState(false)
   const [message, setMessage]= useState("")
-
+  
+  const [selectedTransportation, setSelectedTransportation] = useState<{city:string, transportation_price:number}>({city:"", transportation_price:0})
+  
   useEffect(()=>{
     let newMessage = "Detalles de la orden:"
     order.products.map((prod)=>
@@ -115,9 +120,11 @@ export default function Home() {
       newMessage+= `%0a🍰 ${prod.name} x${prod.quantity}  ----> 💰${prod.quantity*prod.unitPrice}cup`
     })
     newMessage += "%0a---------------------"
-    newMessage+=`%0a💰Monto Total: ${order.total}cup`
+    newMessage+=`%0a💰Subtotal: ${order.total}cup`
+    newMessage+=`%0a💰Costo envio: ${selectedTransportation.transportation_price}cup`
+    newMessage+=`%0a💰Monto Total: ${order.total + selectedTransportation.transportation_price}cup`
     setMessage(newMessage)
-  },[order])
+  },[order, selectedTransportation])
 
   const removeFromOrder=(prod: any)=>{
     let total = 0;
@@ -129,140 +136,174 @@ export default function Home() {
             "total": total
         } 
     )
-}
-  return (
-    <main className="bg-[#fff]">
-      <AppBar position="static">
-        <Toolbar sx={{backgroundColor: "#fff"}} className='lg:flex-row flex flex-col px-32'>
-          <div className="w-[85%] lg:w-full mx-auto my-5 xl:ml-auto xl:mb-5">
-            <Image src="/logo.webp" className='' height={110} width={160} alt="logo"/>
-            <h1 className='text-black text-center mt-2 text-lg'>Dessye&apos;s</h1>
-          </div>
-        </Toolbar>
-      </AppBar>
-      <div className="lg:block hidden">
-        <Swiper
-        className='swiper'
-        modules={[Navigation, Pagination, Scrollbar, A11y]}
-        spaceBetween={50}
-        slidesPerView={3}
-        navigation
-        pagination={{ clickable: true }}
-        >
-          {
-            items.map((item, index) => (
-              <SwiperSlide className='pl-10' key={index}>
-                  <Item item={item} quant={1} order={order} setOrder={setOrder}/>
-              </SwiperSlide>
-            ))
-          }
-        </Swiper>
-      </div>
-      <div className="lg:hidden block">
-          {
-            items.map((item, index) => (
-              <SwiperSlide className='pl-10' key={index}>
-                <Item item={item} quant={1} order={order} setOrder={setOrder}/>
-              </SwiperSlide>
-            ))
-          }
-      </div>
-      {
-        showOrder &&
-        <div className="">
-          <div className="bg-[#ffffff8a] fixed w-full h-full z-10 top-0 blur-2xl"></div>
-          <div className="OrderList flex flex-col justify-between fixed top-[20%] w-[80%] mx-[10%] z-10 bg-[#f0f0f0] p-[5%] rounded-xl">
-            <div className="">
-              <h2 className='font-bold text-xl mb-5'>Compruebe su orden:</h2>
+  }
 
-              <table id='orderTable' className='w-full px-2 text-center mb-12'>
-                <thead className='text-black font-bold'>
-                  <tr>
-                    <td>Producto</td>
-                    <td>Cantidad</td>
-                    <td>Precio</td>
-                    <td></td>
-                  </tr>
-                </thead>
-                <tbody>
-                  {order.products.map((product, key)=>{
-                    return(
-                        <tr className='text-sm text-center' key={key}>
-                          <td>
-                          {product.name}
-                          </td>
-                          <td>
-                          {product.quantity}
-                          </td>
-                          <td>
-                          {product.unitPrice * product.quantity}
-                          </td>
-                          <td>
-                            <IconTrash  onClick={()=>removeFromOrder(product)}/>
-                          </td>
-                        </tr>
-                    )
-                })}
-                  <br />
-                  <tr className='border-t-2 border-[#c6c6c6]'>
-                    <br />
-                    <td>Total a pagar:</td>
-                    <td className='font-bold'>${order.total}</td>
-                  </tr>
-                </tbody>
-              </table>
+  const [transportations, setTransportations] = useState<{city:string, transportation_price:number}[]>([])
+  useEffect(()=>{
+    fetch("/api/transportations", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    }).then(res=>res.json()).then(
+      data=>setTransportations(data instanceof Array ? data : data.transportations)
+    )
+  },[])
+
+  return (
+      <main className="bg-[#fff]">
+        <AppBar position="static">
+          <Toolbar sx={{backgroundColor: "#fff"}} className='lg:flex-row flex flex-col px-32'>
+            <div className="w-[85%] lg:w-full mx-auto my-5 xl:ml-auto xl:mb-5">
+              <Image src="/logo.webp" className='' height={110} width={160} alt="logo"/>
+              <h1 className='text-black text-center mt-2 text-lg'>Dessye&apos;s</h1>
             </div>
-            
-            <div className="flex justify-between w-full mt-4">
-              <Button 
-                size="large" 
-                color="success" 
-                onClick={()=>{setShowOrder(false)}}
-                className='w-[40%] bg-[#fff] text-black' 
-              >
-                  Cancelar
-              </Button>
-              <a href={`https://wa.me/+5353103058?text=${message}`} className="w-[40%] rounded-lg">
+          </Toolbar>
+        </AppBar>
+        <div className="lg:block hidden">
+          <Swiper
+          className='swiper'
+          modules={[Navigation, Pagination, Scrollbar, A11y]}
+          spaceBetween={50}
+          slidesPerView={3}
+          navigation
+          pagination={{ clickable: true }}
+          >
+            {
+              items.map((item, index) => (
+                <SwiperSlide className='pl-10' key={index}>
+                    <Item item={item} quant={1} order={order} setOrder={setOrder}/>
+                </SwiperSlide>
+              ))
+            }
+          </Swiper>
+        </div>
+        <div className="lg:hidden block">
+            {
+              items.map((item, index) => (
+                <SwiperSlide className='pl-10' key={index}>
+                  <Item item={item} quant={1} order={order} setOrder={setOrder}/>
+                </SwiperSlide>
+              ))
+            }
+        </div>
+        {
+          showOrder &&
+          <div className="">
+            <div className="bg-[#ffffff8a] fixed w-full h-full z-10 top-0 blur-2xl"></div>
+            <div className="OrderList flex flex-col justify-between fixed top-[20%] w-[80%] mx-[10%] z-10 bg-[#f0f0f0] p-[5%] rounded-xl">
+              <div className="">
+                <h2 className='font-bold text-xl mb-5'>Compruebe su orden:</h2>
+
+                <table id='orderTable' className='w-full px-2 text-center mb-12'>
+                  <thead className='text-black font-bold'>
+                    <tr>
+                      <td>Producto</td>
+                      <td>Cantidad</td>
+                      <td>Precio</td>
+                      <td></td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {order.products.map((product, key)=>{
+                      return(
+                          <tr className='text-sm text-center' key={key}>
+                            <td>
+                            {product.name}
+                            </td>
+                            <td>
+                            {product.quantity}
+                            </td>
+                            <td>
+                            {product.unitPrice * product.quantity}
+                            </td>
+                            <td>
+                              <IconTrash  onClick={()=>removeFromOrder(product)}/>
+                            </td>
+                          </tr>
+                      )
+                  })}
+                    <br />
+                    <tr>
+                      <td><h1>Municipio:</h1></td>
+                      <select name="" id="" onChange={(e)=>setSelectedTransportation(transportations.filter((t)=>t.city === e.target.value)[0])}>
+                        {
+                          transportations.map((transp)=>(
+                            <option key={transp.city} value={transp.city}>{transp.city}</option>
+                          ))
+                          
+                        }
+                      </select>
+                    </tr>
+                    <tr className=' border-[#c6c6c6]'>
+                      <br />
+                      <td>Subtotal:</td>
+                      <td className='font-bold'>${order.total}</td>
+                    </tr>
+                    <tr className='border-t-2 border-[#c6c6c6]'>
+                      <br />
+                      <td>Precio Envio:</td>
+                      <td className='font-bold'>${selectedTransportation?.transportation_price}</td>
+                    </tr>
+                    <tr className=' border-[#c6c6c6]'>
+                      <br />
+                      <td>Total a pagar:</td>
+                      <td className='font-bold'>${order.total + selectedTransportation?.transportation_price}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              
+              <div className="flex justify-between w-full mt-4">
                 <Button 
                   size="large" 
                   color="success" 
-                  sx={{
-                    '.MuiButton-root:hover': {
-                      backgroundColor:  "#FFA500 !important"
-                    } 
-                  }}
-                  onClick={()=>setIsLoading(true)}
-                  className='w-full bg-[#FFA500] text-black' 
+                  onClick={()=>{setShowOrder(false)}}
+                  className='w-[40%] bg-[#fff] text-black' 
                 >
-                    Listo!
+                    Cancelar
                 </Button>
-              </a>
+                <a href={`https://wa.me/+5353103058?text=${message}`} className="w-[40%] rounded-lg">
+                  <Button 
+                    size="large" 
+                    color="success" 
+                    sx={{
+                      '.MuiButton-root:hover': {
+                        backgroundColor:  "#FFA500 !important"
+                      } 
+                    }}
+                    onClick={()=>setIsLoading(true)}
+                    className='w-full bg-[#FFA500] text-black' 
+                  >
+                      Listo!
+                  </Button>
+                </a>
+              </div>
             </div>
           </div>
-        </div>
-      }
+        }
 
-      {
-        order.products.length > 0 &&
-        <Button 
-          size="large" 
-          color="success" 
-          onClick={()=>setShowOrder(true)}
-          sx={{
-            position: 'absolute'
-          }}  
-          className='fixed top-[90%] left-[60%] bg-[#FFA500] text-black' 
-        >
-            Ver pedido ({order.products.length})
-        </Button>
-      }
-      {
-        isLoading &&
-        <div className="loading fixed top-[0%] left-[0%] pt-[90%] pl-[48%] bg-slate-100 w-full h-full z-20">
-          <CircularProgress />
-          <h2 className='-ml-[62%] mt-5'>Vamos a procesar su pedido, un momento...</h2>
-        </div>
-      }
-    </main>
+        {
+          order.products.length > 0 &&
+          <Button 
+            size="large" 
+            color="success" 
+            onClick={()=>setShowOrder(true)}
+            sx={{
+              position: 'absolute'
+            }}  
+            className='fixed top-[90%] left-[60%] bg-[#FFA500] text-black' 
+          >
+              Ver pedido ({order.products.length})
+          </Button>
+        }
+        {
+          isLoading &&
+          <div className="loading fixed top-[0%] left-[0%] pt-[90%] pl-[48%] bg-slate-100 w-full h-full z-20">
+            <CircularProgress />
+            <h2 className='-ml-[62%] mt-5'>Vamos a procesar su pedido, un momento...</h2>
+          </div>
+        }
+      </main>
   );
 }
