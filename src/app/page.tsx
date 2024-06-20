@@ -237,7 +237,7 @@ export default function Home() {
                       <td><h1>Municipio:</h1></td>
                       <td></td>
                       <select name="" id="" onChange={(e)=>setSelectedTransportation(transportations.filter((t)=>t.city === e.target.value)[0])}>
-                        <option value="">Seleccione</option>
+                        <option value="" className='font-bold'>Seleccione</option>
                         {
                           transportations.map((transp)=>(
                             <option key={transp.city} value={transp.city}>{transp.city}</option>
@@ -274,13 +274,17 @@ export default function Home() {
               }
 
               <div className="">
-                <h2>Seleccione el metodo de pago:</h2>
+                <h2 className='font-bold'>Seleccione el metodo de pago:</h2>
                 <select name="" id="" onChange={(e)=>setPaymentMethod(e.target.value)}>
                   <option value="Enzona">QR Enzona</option>
                   <option value="Transfermovil">QR Transfermovil</option>
                   <option value="Tarjeta">Número de tarjeta</option>
                   <option value="Efectivo">Efectivo a la entrega</option>
                 </select>
+                {
+                  paymentMethod === "Efectivo" &&
+                  <h2 className='text-red-500 font-bold my-5'>Este método de pago solo es permitido si no es su primera compra.</h2>
+                }
                 {
                   paymentMethod === "Tarjeta" ?
                     <div className="my-10">
