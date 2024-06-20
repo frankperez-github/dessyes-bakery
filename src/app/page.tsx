@@ -115,7 +115,7 @@ export default function Home() {
   const [copiedCard, setCopiedCard] = useState(false)
   const [copiedPhone, setCopiedPhone] = useState(false)
 
-  
+  const [deliveryAddress, setDeliveryAddress] = useState("")
   const [selectedTransportation, setSelectedTransportation] = useState<{city:string, transportation_price:number}>({city:"", transportation_price:0})
   
   useEffect(()=>{
@@ -126,10 +126,11 @@ export default function Home() {
     })
     newMessage += "%0a---------------------"
     newMessage+=`%0a💰Subtotal: ${order.total}cup`
-    newMessage+=`%0a💰Costo envio: ${selectedTransportation.transportation_price}cup`
-    newMessage+=`%0a💰Monto Total: ${order.total + selectedTransportation.transportation_price}cup`
+    newMessage+=`%0a💰Costo envio: ${selectedTransportation?.transportation_price}cup`
+    newMessage+=`%0a💰Monto Total: ${order.total + selectedTransportation?.transportation_price}cup`
+    newMessage+=`%0a🚚Direccion de entrega: ${deliveryAddress}`
     setMessage(newMessage)
-  },[order, selectedTransportation])
+  },[order, selectedTransportation, deliveryAddress])
 
   const removeFromOrder=(prod: any)=>{
     let total = 0;
@@ -154,6 +155,9 @@ export default function Home() {
       data=>setTransportations(data instanceof Array ? data : data.transportations)
     )
   },[])
+
+  const confirmationPhone = "53103058"
+  const confirmationCard = "9205 9598 7370 9944"
 
   return (
       <main className="bg-[#fff]">
@@ -260,6 +264,15 @@ export default function Home() {
                   </tbody>
                 </table>
               </div>
+              
+              {
+                (selectedTransportation?.city !== "UH" && selectedTransportation?.city !== "") &&
+                <div className="mb-10">
+                  <label htmlFor="">Dirección de entrega:</label>
+                  <textarea onChange={(e)=>setDeliveryAddress(e.target.value)} className='w-full'/>
+                </div>
+              }
+
               <div className="">
                 <h2>Seleccione el metodo de pago:</h2>
                 <select name="" id="" onChange={(e)=>setPaymentMethod(e.target.value)}>
@@ -273,25 +286,36 @@ export default function Home() {
                     <div className="my-10">
                       <h2>Tarjeta:</h2>
                       <div className="flex justify-evenly">
-                        <h2>9205 9598 7370 9944</h2>
-                        <button onClick={()=>{navigator.clipboard.writeText("9205 9598 7370 9944"); setCopiedCard(true); setCopiedPhone(false)}}>{copiedCard ? "✅" : "copiar"}</button>
+                        <h2>{confirmationCard}</h2>
+                        <button onClick={()=>{navigator.clipboard.writeText(confirmationCard); setCopiedCard(true); setCopiedPhone(false)}}>{copiedCard ? "✅" : "copiar"}</button>
                       </div>
 
                       <h2>Teléfono:</h2>
                       <div className="flex justify-evenly">
-                        <h2>53103058</h2>
-                        <button onClick={()=>{navigator.clipboard.writeText("53103058"); setCopiedCard(false); setCopiedPhone(true)}}>{copiedPhone ? "✅" : "copiar"}</button>
+                        <h2>{confirmationPhone}</h2>
+                        <button onClick={()=>{navigator.clipboard.writeText(confirmationPhone); setCopiedCard(false); setCopiedPhone(true)}}>{copiedPhone ? "✅" : "copiar"}</button>
                       </div>
                     </div>
                   :
                   paymentMethod === "Enzona" ?
                     <div className="mx-auto w-2/3 my-10">
                       <Image src="/enzona.jpeg" fill className='image' alt="QR enzona"/>
+                      <h2 className='mt-5'>Confirmar a:</h2>
+                      <div className="flex justify-evenly">
+                        <h2>{confirmationPhone}</h2>
+                        <button onClick={()=>{navigator.clipboard.writeText(confirmationPhone); setCopiedCard(false); setCopiedPhone(true)}}>{copiedPhone ? "✅" : "copiar"}</button>
+                      </div>
                     </div>
+                    
                   :
                   paymentMethod === "Transfermovil" &&
                     <div className="mx-auto w-2/3 my-10">
                       <Image src="/transfermovil.jpeg" fill className='image' alt="QR enzona"/>
+                      <h2 className='mt-5'>Confirmar a:</h2>
+                      <div className="flex justify-evenly">
+                        <h2>{confirmationPhone}</h2>
+                        <button onClick={()=>{navigator.clipboard.writeText(confirmationPhone); setCopiedCard(false); setCopiedPhone(true)}}>{copiedPhone ? "✅" : "copiar"}</button>
+                      </div>
                     </div>
                 }
               </div>
@@ -314,7 +338,7 @@ export default function Home() {
                         backgroundColor:  "#FFA500 !important"
                       } 
                     }}
-                    onClick={()=>setIsLoading(true)}
+                    onClick={()=>selectedTransportation?.city !== "" ? setIsLoading(true): alert("Seleccione un municipio")}
                     className='w-full bg-[#FFA500] text-black' 
                   >
                     {
@@ -333,7 +357,7 @@ export default function Home() {
           <Button 
             size="large" 
             color="success" 
-            onClick={()=>setShowOrder(true)}
+            onClick={()=>{setShowOrder(true); window.scrollTo(0,0)}}
             sx={{
               position: 'absolute'
             }}  
