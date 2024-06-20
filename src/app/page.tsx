@@ -224,9 +224,16 @@ export default function Home() {
                       )
                   })}
                     <br />
-                    <tr>
+                    <tr className=' border-[#c6c6c6]'>
+                      <br />
+                      <td>Subtotal:</td>
+                      <td className='font-bold'>${order.total}</td>
+                    </tr>
+                    <tr className='border-t-2 border-[#c6c6c6]'>
+                      <td></td>
                       <td><h1>Municipio:</h1></td>
                       <select name="" id="" onChange={(e)=>setSelectedTransportation(transportations.filter((t)=>t.city === e.target.value)[0])}>
+                        <option value="">Seleccione</option>
                         {
                           transportations.map((transp)=>(
                             <option key={transp.city} value={transp.city}>{transp.city}</option>
@@ -235,12 +242,7 @@ export default function Home() {
                         }
                       </select>
                     </tr>
-                    <tr className=' border-[#c6c6c6]'>
-                      <br />
-                      <td>Subtotal:</td>
-                      <td className='font-bold'>${order.total}</td>
-                    </tr>
-                    <tr className='border-t-2 border-[#c6c6c6]'>
+                    <tr className=''>
                       <br />
                       <td>Precio Envio:</td>
                       <td className='font-bold'>${selectedTransportation?.transportation_price}</td>
