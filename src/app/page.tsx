@@ -330,11 +330,6 @@ export default function Home() {
                   paymentMethod === "Transfermovil" &&
                     <div className="mx-auto w-2/3 my-10">
                       <Image src="/transfermovil.jpeg" fill className='image' alt="QR enzona"/>
-                      <h2 className='mt-5'>Confirmar a:</h2>
-                      <div className="flex justify-evenly">
-                        <h2>{confirmationPhone}</h2>
-                        <button onClick={()=>{navigator.clipboard.writeText(confirmationPhone); setCopiedCard(false); setCopiedPhone(true)}}>{copiedPhone ? "✅" : "copiar"}</button>
-                      </div>
                     </div>
                 }
               </div>
