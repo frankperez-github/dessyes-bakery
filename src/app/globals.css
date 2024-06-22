@@ -39,3 +39,20 @@
   width: 100% !important;
   position: relative !important;
 }
+
+
+@media (max-width:375px) {
+  .OrderList
+  {
+    width: 90%;
+    margin: 0 5%;
+  }
+}
+
+@media (max-width:320px) {
+  .OrderList
+  {
+    width: 100%;
+    margin: 0%;
+  }
+}
