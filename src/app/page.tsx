@@ -128,7 +128,10 @@ export default function Home() {
     newMessage+=`%0a💰Subtotal: ${order.total}cup`
     newMessage+=`%0a💰Costo envio: ${selectedTransportation?.transportation_price}cup`
     newMessage+=`%0a💰Monto Total: ${order.total + selectedTransportation?.transportation_price}cup`
-    newMessage+=`%0a🚚Direccion de entrega: ${deliveryAddress}`
+    if(selectedTransportation?.transportation_price !== 0)
+    {
+      newMessage+=`%0a🚚Direccion de entrega: ${deliveryAddress}`
+    }
     setMessage(newMessage)
   },[order, selectedTransportation, deliveryAddress])
 
@@ -142,6 +145,18 @@ export default function Home() {
             "total": total
         } 
     )
+  }
+
+  const handleSubmit=()=>{
+    if(selectedTransportation?.city !== "") 
+    {
+      setIsLoading(true)
+      window.location.replace(`https://wa.me/+5353103058?text=${message}`)
+    }
+    else
+    {
+      alert("Seleccione un municipio")
+    }
   }
 
   const [transportations, setTransportations] = useState<{city:string, transportation_price:number}[]>([])
@@ -237,7 +252,7 @@ export default function Home() {
                       <td><h1>Municipio:</h1></td>
                       <td></td>
                       <select name="" id="" onChange={(e)=>setSelectedTransportation(transportations.filter((t)=>t.city === e.target.value)[0])}>
-                        <option value="" className='font-bold'>Seleccione</option>
+                        <option value="" className='font-bold'  id="defaultCity">Seleccione</option>
                         {
                           transportations.map((transp)=>(
                             <option key={transp.city} value={transp.city}>{transp.city}</option>
@@ -333,24 +348,22 @@ export default function Home() {
                 >
                     Cancelar
                 </Button>
-                <a href={`https://wa.me/+5353103058?text=${message}`} className="w-[40%] rounded-lg">
-                  <Button 
-                    size="large" 
-                    color="success" 
-                    sx={{
-                      '.MuiButton-root:hover': {
-                        backgroundColor:  "#FFA500 !important"
-                      } 
-                    }}
-                    onClick={()=>selectedTransportation?.city !== "" ? setIsLoading(true): alert("Seleccione un municipio")}
-                    className='w-full bg-[#FFA500] text-black' 
-                  >
-                    {
-                      paymentMethod === "Efectivo" ? "Listo!" : "Ya pagué!"
-                    }
-                      
-                  </Button>
-                </a>
+                <Button 
+                  size="large" 
+                  color="success" 
+                  sx={{
+                    '.MuiButton-root:hover': {
+                      backgroundColor:  "#FFA500 !important"
+                    } 
+                  }}
+                  onClick={()=>handleSubmit()}
+                  className='bg-[#FFA500] text-black w-[40%] rounded-lg' 
+                >
+                  {
+                    paymentMethod === "Efectivo" ? "Listo!" : "Ya pagué!"
+                  }
+                    
+                </Button>
               </div>
             </div>
           </div>
