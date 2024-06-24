@@ -128,6 +128,7 @@ export default function Home() {
     newMessage+=`%0a💰Subtotal: ${order.total}cup`
     newMessage+=`%0a💰Costo envio: ${selectedTransportation?.transportation_price}cup`
     newMessage+=`%0a💰Monto Total: ${order.total + selectedTransportation?.transportation_price}cup`
+    newMessage+=`%0a Método de Pago: ${paymentMethod}`
     if(selectedTransportation?.transportation_price !== 0)
     {
       newMessage+=`%0a🚚Direccion de entrega: ${deliveryAddress}`
