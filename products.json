@@ -44,7 +44,7 @@
       "name": "Eclairs",
       "description": "Eclairs rellenos con crema pastelera de vainilla y bañados en cobertura de chocolate",
       "image": "/eclairs.jpeg",
-      "unitPrice": 160,
+      "unitPrice": 120,
       "defaultQuant": 6
     },
     {
