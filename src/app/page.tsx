@@ -185,6 +185,13 @@ export default function Home() {
     )
   },[])
 
+  useEffect(()=>{
+    if(isLoading)
+    {
+      setTimeout(()=>setIsLoading(false), 5000)
+    }
+  },[isLoading])
+
   const confirmationPhone = "53103058"
   const confirmationCard = "9205 9598 7370 9944"
 
