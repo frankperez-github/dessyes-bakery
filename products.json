@@ -40,6 +40,14 @@
       "defaultQuant": 6
     },
     {
+      "id": 9,
+      "name": "Tartaletas",
+      "description": "Tartaletas de guayaba.",
+      "image": "/tartaletas.jpeg",
+      "unitPrice": 70,
+      "defaultQuant": 6
+    },
+    {
       "id": 5,
       "name": "Eclairs",
       "description": "Eclairs rellenos con crema pastelera de vainilla y bañados en cobertura de chocolate",
@@ -69,14 +77,6 @@
       "description": "Palmeritas de hojaldre",
       "image": "/Palmeras.jpeg",
       "unitPrice": 60,
-      "defaultQuant": 6
-    },
-    {
-      "id": 9,
-      "name": "Tartaletas",
-      "description": "Tartaletas de guayaba.",
-      "image": "/tartaletas.jpeg",
-      "unitPrice": 70,
       "defaultQuant": 6
     }
 ]
