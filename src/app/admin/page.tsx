@@ -8,7 +8,7 @@ export default function AdminPanel()
 {
     const [products, setProducts] = useState([]);
     const [productMethod, setProductMethod] = useState("POST")
-    const [selectedProduct, setSelectedProduct] = useState({_id:"", name:"", image:"", description:"", unitPrice:""})
+    const [selectedProduct, setSelectedProduct] = useState({_id:"", name:"", image:"", description:"", unitPrice:"", defaultQuant:""})
     const [loadedProducts, setLoadedProducts] = useState(false)
 
     useEffect(()=>{
@@ -20,7 +20,7 @@ export default function AdminPanel()
         }
         else
         {
-            setSelectedProduct({_id:"", name:"", image:"", description:"", unitPrice:""})
+            setSelectedProduct({_id:"", name:"", image:"", description:"", unitPrice:"", defaultQuant: ""})
             setLoadedProducts(false)
             setProducts([])
         }
@@ -35,20 +35,10 @@ export default function AdminPanel()
 
     const onSubmitProduct = async (e:any) => {
         e.preventDefault()
-        const form = (document.forms as unknown as {[key:string]:HTMLFormElement})["createForm"]
-        const product = {
-            "name": (form["name"] as unknown as HTMLInputElement).value,
-            "description": (form["description"] as unknown as HTMLInputElement).value,
-            "unitPrice": (form["price"] as unknown as HTMLInputElement).value,
-            "image": (form["image"] as unknown as HTMLInputElement).value
-        }
         await toast.promise(
             fetch(`${window.location.origin}/api/products/${selectedProduct?._id}`, {
                 method: productMethod,
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(product)
+                body: new FormData(e.target)
             }).then(response => {
                 return response.json();
             }), {
@@ -57,7 +47,7 @@ export default function AdminPanel()
                 error: `There was an error 🤯`
             }
         );
-        // window.location.reload()
+        window.location.reload()
     }
 
     const [transportations, setTransportations] = useState([]);
@@ -136,7 +126,7 @@ export default function AdminPanel()
                             </select>
                     }
                 </h1>
-                <form action="" name="createForm" onSubmit={(e)=>onSubmitProduct(e)} className="w-full xl:grid lg:grid grid-cols-2 text-lg">
+                <form onSubmit={onSubmitProduct} name="createForm" className="w-full xl:grid lg:grid grid-cols-2 text-lg">
                     <div className="xl:flex lg:flex flex-row my-10">
                         <label className="mr-5" htmlFor="name">Nombre:</label>
                         <input onChange={(e)=>{setSelectedProduct({
@@ -144,7 +134,8 @@ export default function AdminPanel()
                             name: e.target.value,
                             image: selectedProduct?.image,
                             description: selectedProduct?.description,
-                            unitPrice: selectedProduct?.unitPrice
+                            unitPrice: selectedProduct?.unitPrice,
+                            defaultQuant: selectedProduct?.defaultQuant
                         })}} value={selectedProduct?.name} className="border-2" type="text" name="name" id="" />
                     </div>
 
@@ -155,19 +146,33 @@ export default function AdminPanel()
                             name: selectedProduct?.name,
                             image: selectedProduct?.image,
                             description: e.target.value,
-                            unitPrice: selectedProduct?.unitPrice
+                            unitPrice: selectedProduct?.unitPrice,
+                            defaultQuant: selectedProduct?.defaultQuant
                         })}} value={selectedProduct?.description} className="border-2" type="text" name="description" id="" />
                     </div>
 
                     <div className="xl:flex lg:flex flex-row my-10">
-                        <label className="mr-5" htmlFor="price">Precio unitario:</label>
+                        <label className="mr-5" htmlFor="unitPrice">Precio unitario:</label>
                         <input onChange={(e)=>{setSelectedProduct({
                             _id: selectedProduct?._id,
                             name: selectedProduct?.name,
                             image: selectedProduct?.image,
                             description: selectedProduct?.description,
-                            unitPrice: e.target.value
-                        })}} value={selectedProduct?.unitPrice} className="border-2" type="number" step="any" name="price" id="" />
+                            unitPrice: e.target.value,
+                            defaultQuant: selectedProduct?.defaultQuant
+                        })}} value={selectedProduct?.unitPrice} className="border-2" type="number" step="any" name="unitPrice" id="" />
+                    </div>
+
+                    <div className="xl:flex lg:flex flex-row my-10">
+                        <label className="mr-5" htmlFor="defaultQuant">Contenido de la ración:</label>
+                        <input onChange={(e)=>{setSelectedProduct({
+                            _id: selectedProduct?._id,
+                            name: selectedProduct?.name,
+                            image: selectedProduct?.image,
+                            description: selectedProduct?.description,
+                            unitPrice: selectedProduct?.unitPrice,
+                            defaultQuant: e.target.value,
+                        })}} value={selectedProduct?.defaultQuant} className="border-2" type="number" step="any" name="defaultQuant" id="" />
                     </div>
 
                     <div className="xl:flex lg:flex flex-row my-10">

@@ -24,8 +24,14 @@ export async function PUT(req:any, {params}:any)
 export async function DELETE(req:any, {params}:any)
 {
     const { id } = params;
-    await db.connect();
+    const {bucket} = await db.connect();
     const product = await Products.findByIdAndDelete(id);
+    const files = await bucket
+            .find({
+                filename: product.image,
+            }).toArray()
+        const file = files[0];
+        bucket.delete(file._id);
     await db.disconnect();
     return Response.json({ product });
 }

@@ -9,7 +9,6 @@ import Item from './components/Item';
 import { AppBar, Toolbar, Button, CircularProgress } from '@mui/material';
 import Image from 'next/image';
 import { IconTrash } from '@tabler/icons-react';
-import items from "../../products.json"
 
 
 
@@ -118,6 +117,7 @@ export default function Home() {
   const [deliveryAddress, setDeliveryAddress] = useState("")
   const [selectedTransportation, setSelectedTransportation] = useState<{city:string, transportation_price:number}>({city:"", transportation_price:0})
   
+  
   useEffect(()=>{
     let newMessage = "Detalles de la orden:"
     order.products.map((prod)=>
@@ -130,45 +130,58 @@ export default function Home() {
     newMessage+=`%0a💰Monto Total: ${order.total + selectedTransportation?.transportation_price}cup`
     newMessage+=`%0a Método de Pago: ${paymentMethod}`
     if(selectedTransportation?.transportation_price !== 0)
-    {
-      newMessage+=`%0a🚚Direccion de entrega: ${deliveryAddress}`
-    }
-    setMessage(newMessage)
-  },[order, selectedTransportation, deliveryAddress])
-
+      {
+        newMessage+=`%0a🚚Direccion de entrega: ${deliveryAddress}`
+      }
+      setMessage(newMessage)
+    },[order, selectedTransportation, deliveryAddress])
+    
   const removeFromOrder=(prod: any)=>{
     let total = 0;
     const newOrder =[...order.products.filter((product)=>product.name != prod.name)]
     newOrder.map((prod)=>total+=prod.unitPrice*prod.quantity)
     setOrder(
-        {
-            "products": newOrder as any,
-            "total": total
-        } 
+      {
+        "products": newOrder as any,
+        "total": total
+      } 
     )
   }
-
+  
   const handleSubmit=()=>{
     if(selectedTransportation?.city !== "") 
-    {
-      setIsLoading(true)
-      window.location.replace(`https://wa.me/+5353103058?text=${message}`)
+      {
+        setIsLoading(true)
+        window.location.replace(`https://wa.me/+5353103058?text=${message}`)
+      }
+      else
+      {
+        alert("Seleccione un municipio")
+      }
     }
-    else
-    {
-      alert("Seleccione un municipio")
-    }
-  }
-
+    
+  const [products, setProducts] = useState<any[]>([])
   const [transportations, setTransportations] = useState<{city:string, transportation_price:number}[]>([])
+  
   useEffect(()=>{
     fetch("/api/transportations", {
       method: "GET",
       headers: {
         "Content-Type": "application/json"
       }
-    }).then(res=>res.json()).then(
+    }).then(
+      res=>res.json()
+    ).then(
       data=>setTransportations(data instanceof Array ? data : data.transportations)
+    )
+
+    fetch("/api/products", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    }).then(res=>res.json()).then(
+      data=>setProducts(data instanceof Array ? data : data.products)
     )
   },[])
 
@@ -195,7 +208,7 @@ export default function Home() {
           pagination={{ clickable: true }}
           >
             {
-              items.map((item, index) => (
+              products.map((item, index) => (
                 <SwiperSlide className='pl-10' key={index}>
                     <Item item={item} quant={1} order={order} setOrder={setOrder}/>
                 </SwiperSlide>
@@ -205,7 +218,7 @@ export default function Home() {
         </div>
         <div className="lg:hidden block">
             {
-              items.map((item, index) => (
+              products.map((item, index) => (
                 <SwiperSlide className='pl-10' key={index}>
                   <Item item={item} quant={1} order={order} setOrder={setOrder}/>
                 </SwiperSlide>

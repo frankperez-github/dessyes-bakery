@@ -70,5 +70,13 @@
       "image": "/Palmeras.jpeg",
       "unitPrice": 60,
       "defaultQuant": 6
+    },
+    {
+      "id": 9,
+      "name": "Tartaletas",
+      "description": "Tartaletas de guayaba.",
+      "image": "/tartaletas.jpeg",
+      "unitPrice": 70,
+      "defaultQuant": 6
     }
 ]
