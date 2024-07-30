@@ -1,6 +1,6 @@
 [
     {
-      "id": 8,
+      "id": 10,
       "name": "Pan suave",
       "description": "Pan redondo, fresco y suave.",
       "image": "/bread.jpeg",
@@ -8,7 +8,7 @@
       "defaultQuant": 1
     },
     {
-      "id": 9,
+      "id": 11,
       "name": "Merenguito",
       "description": "Merenguito.",
       "image": "/merengue.jpeg",

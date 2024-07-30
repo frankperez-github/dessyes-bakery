@@ -9,101 +9,11 @@ import Item from './components/Item';
 import { AppBar, Toolbar, Button, CircularProgress } from '@mui/material';
 import Image from 'next/image';
 import { IconTrash } from '@tabler/icons-react';
+import Products from "../../products.json"
 
 
 
 export default function Home() {
-
-//   const items = [
-//     {
-//       id: 8,
-//       name: "Pan suave",
-//       description: "Pan redondo, fresco y suave.",
-//       image: "/bread.jpeg",
-//       unitPrice: 20,
-//       defaultQuant: 1
-//     },
-//     {
-//       id: 9,
-//       name: "Merenguito",
-//       description: "Merenguito.",
-//       image: "/merengue.jpeg",
-//       unitPrice: 2,
-//       defaultQuant: 1
-//     },
-//     {
-//       id: 2,
-//       name: "Rollos de canela",
-//       description: "Rollos de canela con glaseado de vainilla.",
-//       image: "/coffecake.jpeg",
-//       unitPrice: 85,
-//       defaultQuant: 8,
-//     },
-//     {
-//       id: 1,      
-//       name: "Pasteles",
-//       description: "Pasteles de hojaldre con guayaba o coco.",
-//       image: "/pasteles.jpeg",
-//       unitPrice: 60,
-//       defaultQuant: 6,
-//     },
-//     {
-//       id: 3,      
-//       name: "Magdalenas",
-//       description: "Magdalenas de vainilla.",
-//       image: "/magdalenas.jpeg",
-//       unitPrice: 65,
-//       defaultQuant: 6
-//     },
-//     {
-//       id: 5,
-//       name: "Eclairs",
-//       description: "Eclairs relleno con crema pastelera de vainilla y bañado en cobertura de chocolate",
-//       image: "/eclairs.jpeg",
-//       unitPrice: 160,
-//       defaultQuant: 6
-//     },
-//     {
-//       id: 0,
-//       name: "Cake",
-//       description: "Cake de panetela y crema pastelera.",
-//       image: "/cake.jpeg",
-//       unitPrice: 3000,
-//       defaultQuant: 1,
-//     },
-//     // {
-//     //   id: 4,      
-//     //   name: "Dona",
-//     //   description: "Dona con glaseado de vainilla o cobertura de chocolate.",
-//     //   image: "/donas.jpeg",
-//     //   unitPrice: 80,
-//     //   defaultQuant: 1
-//     // }
-//     // {
-//     //   id: 6,
-//     //   name: "Cake Helado",
-//     //   description: "Cake con capas de panetela de chocolate y helado",
-//     //   image: "/IceCreamCake.jpeg",
-//     //   unitPrice: 4000,
-//     //   defaultQuant: 1
-//     // },
-//     {
-//       id: 7,
-//       name: "Brazo Gitano",
-//       description: "Brazo gitano de panetela y nata. Cubierto con nata y cobertura de chocolate",
-//       image: "/SwissRoll.jpeg",
-//       unitPrice: 1500,
-//       defaultQuant: 1
-//     },
-//     {
-//       id: 8,
-//       name: "Palmeras",
-//       description: "Palmeritas de hojaldre",
-//       image: "/Palmeras.jpeg",
-//       unitPrice: 60,
-//       defaultQuant: 6
-//     }
-// ]
 
   const [showOrder, setShowOrder] = useState(false)
   const [order, setOrder] = useState<{"products": any[], "total": number}>({"products":[], "total": 0})
@@ -160,7 +70,7 @@ export default function Home() {
       }
     }
     
-  const [products, setProducts] = useState<any[]>([])
+  const [products, setProducts] = useState<any[]>(Products)
   const [transportations, setTransportations] = useState<{city:string, transportation_price:number}[]>([])
   
   useEffect(()=>{
@@ -175,14 +85,14 @@ export default function Home() {
       data=>setTransportations(data instanceof Array ? data : data.transportations)
     )
 
-    fetch("/api/products", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json"
-      }
-    }).then(res=>res.json()).then(
-      data=>setProducts(data instanceof Array ? data : data.products)
-    )
+    // fetch("/api/products", {
+    //   method: "GET",
+    //   headers: {
+    //     "Content-Type": "application/json"
+    //   }
+    // }).then(res=>res.json()).then(
+    //   data=>setProducts(data instanceof Array ? data : data.products)
+    // )
   },[])
 
   useEffect(()=>{

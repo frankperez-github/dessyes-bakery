@@ -49,7 +49,7 @@ function Item(props: {
                 <CardMedia
                 component="img"
                 height="140"
-                image={`api/images/${props.item.image}`}
+                image={`${props.item.image}`}
                 alt="bakery"
                 />
                 <CardContent>
