@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { db } from "../../../database/db";
 
-export async function GET(req: NextApiRequest, { params }: any) {
+export async function GET(req: any, { params }: any) {
   const { filename } = params;
   
   if (!filename || typeof filename !== "string") {
