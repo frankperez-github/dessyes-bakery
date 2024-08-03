@@ -8,7 +8,7 @@ export default function AdminPanel()
 {
     const [products, setProducts] = useState([]);
     const [productMethod, setProductMethod] = useState("POST")
-    const [selectedProduct, setSelectedProduct] = useState({_id:"", name:"", image:"", description:"", unitPrice:"", defaultQuant:""})
+    const [selectedProduct, setSelectedProduct] = useState({id:"", name:"", image:"", description:"", unitPrice:"", defaultQuant:""})
     const [loadedProducts, setLoadedProducts] = useState(false)
 
     useEffect(()=>{
@@ -20,7 +20,7 @@ export default function AdminPanel()
         }
         else
         {
-            setSelectedProduct({_id:"", name:"", image:"", description:"", unitPrice:"", defaultQuant: ""})
+            setSelectedProduct({id:"", name:"", image:"", description:"", unitPrice:"", defaultQuant: ""})
             setLoadedProducts(false)
             setProducts([])
         }
@@ -36,7 +36,7 @@ export default function AdminPanel()
     const onSubmitProduct = async (e:any) => {
         e.preventDefault()
         await toast.promise(
-            fetch(`${window.location.origin}/api/products/${selectedProduct?._id}`, {
+            fetch(`${window.location.origin}/api/products/${selectedProduct?.id}`, {
                 method: productMethod,
                 body: new FormData(e.target)
             }).then(response => {
@@ -52,7 +52,7 @@ export default function AdminPanel()
 
     const [transportations, setTransportations] = useState([]);
     const [transportationMethod, setTransportationMethod] = useState("POST")
-    const [selectedTransportation, setSelectedTransportation] = useState({_id:"", city:"", transportation_price:""})
+    const [selectedTransportation, setSelectedTransportation] = useState({id:"", city:"", transportation_price:""})
     const [loadedTransportations, setLoadedTransportations] = useState(false)
 
     useEffect(()=>{
@@ -64,7 +64,7 @@ export default function AdminPanel()
         }
         else
         {
-            setSelectedTransportation({_id:"", city:"", transportation_price:""})
+            setSelectedTransportation({id:"", city:"", transportation_price:""})
             setLoadedTransportations(false)
             setTransportations([])
         }
@@ -86,7 +86,7 @@ export default function AdminPanel()
             "transportation_price": (form["transportation_price"] as unknown as HTMLInputElement).value,
         }
         await toast.promise(
-            fetch(`${window.location.origin}/api/transportations/${selectedTransportation?._id}`, {
+            fetch(`${window.location.origin}/api/transportations/${selectedTransportation?.id}`, {
                 method: transportationMethod,
                 headers: {
                     "Content-Type": "application/json"
@@ -100,6 +100,7 @@ export default function AdminPanel()
                 error: `There was an error 🤯`
             }
         );
+        window.location.reload()
     }
     
     return(
@@ -116,11 +117,11 @@ export default function AdminPanel()
                     {
                         loadedProducts  
                             &&
-                            <select name="" id="" onChange={(e)=>setSelectedProduct(products.filter((x:any)=>x._id == e.target.value)[0])}>
+                            <select name="" id="" onChange={(e)=>setSelectedProduct(products.filter((x:any)=>x.id == e.target.value)[0])}>
                                 <option value="default">Select Product</option>
                                 {
                                     products.map((product:any, key)=>
-                                        <option key={key} value={product._id} onClick={()=>setSelectedProduct(product)}>{product.name}</option>
+                                        <option key={key} value={product.id} onClick={()=>setSelectedProduct(product)}>{product.name}</option>
                                     )
                                 }
                             </select>
@@ -130,7 +131,7 @@ export default function AdminPanel()
                     <div className="xl:flex lg:flex flex-row my-10">
                         <label className="mr-5" htmlFor="name">Nombre:</label>
                         <input onChange={(e)=>{setSelectedProduct({
-                            _id: selectedProduct?._id,
+                            id: selectedProduct?.id,
                             name: e.target.value,
                             image: selectedProduct?.image,
                             description: selectedProduct?.description,
@@ -142,7 +143,7 @@ export default function AdminPanel()
                     <div className="xl:flex lg:flex flex-row my-10">
                         <label className="mr-5" htmlFor="description">Descripción:</label>
                         <input onChange={(e)=>{setSelectedProduct({
-                            _id: selectedProduct?._id,
+                            id: selectedProduct?.id,
                             name: selectedProduct?.name,
                             image: selectedProduct?.image,
                             description: e.target.value,
@@ -154,7 +155,7 @@ export default function AdminPanel()
                     <div className="xl:flex lg:flex flex-row my-10">
                         <label className="mr-5" htmlFor="unitPrice">Precio unitario:</label>
                         <input onChange={(e)=>{setSelectedProduct({
-                            _id: selectedProduct?._id,
+                            id: selectedProduct?.id,
                             name: selectedProduct?.name,
                             image: selectedProduct?.image,
                             description: selectedProduct?.description,
@@ -166,7 +167,7 @@ export default function AdminPanel()
                     <div className="xl:flex lg:flex flex-row my-10">
                         <label className="mr-5" htmlFor="defaultQuant">Contenido de la ración:</label>
                         <input onChange={(e)=>{setSelectedProduct({
-                            _id: selectedProduct?._id,
+                            id: selectedProduct?.id,
                             name: selectedProduct?.name,
                             image: selectedProduct?.image,
                             description: selectedProduct?.description,
@@ -177,7 +178,7 @@ export default function AdminPanel()
 
                     <div className="xl:flex lg:flex flex-row my-10">
                         <label className="mr-5" htmlFor="image">Imagen:</label>
-                        <input className="border-2 w-full" type="file" name="image" id="" />
+                        <input className="border-2 w-full" type="file" name="image"/>
                     </div>
                     <div className="flex my-10 col-span-2">
                         <button className="border-2 w-1/3 p-2 rounded-lg bg-red-500 text-white mx-auto">
@@ -202,10 +203,11 @@ export default function AdminPanel()
                     {
                         loadedTransportations  
                             &&
-                            <select name="" id="" onChange={(e)=>setSelectedTransportation(transportations.filter((x:any)=>x._id == e.target.value)[0])}>
+                            <select name="" id="" onChange={(e)=>setSelectedTransportation(transportations.filter((x:any)=>x.id == e.target.value)[0])}>
+                                <option value="Seleccione">Seleccione</option>
                                 {
                                     transportations.map((transportation:any, key)=>
-                                        <option key={key} value={transportation._id} onClick={()=>setSelectedTransportation(transportation)}>{transportation.city}</option>
+                                        <option key={key} value={transportation.id} onClick={()=>setSelectedTransportation(transportation)}>{transportation.city}</option>
                                     )
                                 }
                             </select>
@@ -216,7 +218,7 @@ export default function AdminPanel()
                         <label className="mr-5" htmlFor="city">Municipio:</label>
                         {
                             <input className="border-2" type="text" name="city" id="" value={selectedTransportation?.city} onChange={(e)=>{setSelectedTransportation({
-                                _id: selectedTransportation?._id,
+                                id: selectedTransportation?.id,
                                 city: e.target.value,
                                 transportation_price: selectedTransportation?.transportation_price
                             })}}/>
@@ -227,7 +229,7 @@ export default function AdminPanel()
                         <label className="mr-5" htmlFor="transportation_price">Precio:</label>
                         {
                             <input className="border-2" type="number" step="any" name="transportation_price" id="" value={selectedTransportation?.transportation_price} onChange={(e)=>{setSelectedTransportation({
-                                _id: selectedTransportation?._id,
+                                id: selectedTransportation?.id,
                                 city: selectedTransportation?.city,
                                 transportation_price: e.target.value
                             

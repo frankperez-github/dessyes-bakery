@@ -6,10 +6,9 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import Item from './components/Item';
-import { AppBar, Toolbar, Button, CircularProgress } from '@mui/material';
 import Image from 'next/image';
+import { AppBar, Toolbar, Button, CircularProgress } from '@mui/material';
 import { IconTrash } from '@tabler/icons-react';
-import Products from "../../products.json"
 
 
 
@@ -70,7 +69,7 @@ export default function Home() {
       }
     }
     
-  const [products, setProducts] = useState<any[]>(Products)
+  const [products, setProducts] = useState<any[]>([])
   const [transportations, setTransportations] = useState<{city:string, transportation_price:number}[]>([])
   
   useEffect(()=>{
@@ -85,14 +84,14 @@ export default function Home() {
       data=>setTransportations(data instanceof Array ? data : data.transportations)
     )
 
-    // fetch("/api/products", {
-    //   method: "GET",
-    //   headers: {
-    //     "Content-Type": "application/json"
-    //   }
-    // }).then(res=>res.json()).then(
-    //   data=>setProducts(data instanceof Array ? data : data.products)
-    // )
+    fetch("/api/products", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    }).then(res=>res.json()).then(
+      data=>setProducts(data instanceof Array ? data : data.products)
+    )
   },[])
 
   useEffect(()=>{

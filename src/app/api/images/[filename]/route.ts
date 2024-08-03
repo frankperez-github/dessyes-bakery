@@ -1,53 +1,45 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { db } from "../../../database/db";
+import { createClient } from "@supabase/supabase-js";
 
-export async function GET(req: any, { params }: any) {
-  const { filename } = params;
-  
+// Initialize Supabase client
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL || "",
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ""
+);
+
+export default async function GET(req: NextApiRequest, res: NextApiResponse) {
+  const { filename } = req.query;
+
   if (!filename || typeof filename !== "string") {
-    return new Response(JSON.stringify({ error: "Filename is required and must be a string" }), {
-      status: 400,
-      headers: { "Content-Type": "application/json" }
-    });
+    return res.status(400).json({ error: "Filename is required and must be a string" });
   }
 
   try {
-    const { bucket } = await db.connect();
+    // Define your bucket name
+    const bucketName = "images";
 
-    const files = await bucket.find({ filename }).toArray();
+    // Download file from Supabase Storage
+    const { data, error } = await supabase.storage
+      .from(bucketName)
+      .download(filename);
 
-    if (files.length === 0) {
-      return new Response(JSON.stringify({ error: "File does not exist" }), {
-        status: 404,
-        headers: { "Content-Type": "application/json" }
-      });
+    if (error) {
+      console.error("Error downloading file:", error.message);
+      return res.status(404).json({ error: "File does not exist" });
     }
 
-    const file = files[0];
-    const stream = bucket.openDownloadStreamByName(file.filename);
+    // Read the data as a buffer
+    const buffer = await data.arrayBuffer();
 
-    const headers = new Headers();
-    headers.set("Content-Type", file.contentType || "application/octet-stream");
+    // Set appropriate headers
+    res.setHeader("Content-Type", data.type || "application/octet-stream");
+    res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
+    res.setHeader("Content-Length", Buffer.byteLength(buffer));
 
-    const readableStream = new ReadableStream({
-      start(controller) {
-        stream.on("data", (chunk) => {
-          controller.enqueue(chunk);
-        });
-
-        stream.on("end", () => {
-          controller.close();
-        });
-
-        stream.on("error", (error) => {
-          console.error("Stream error:", error);
-          controller.error(error);
-        });
-      }
-    });
-
-    return new Response(readableStream, { headers });
+    // Send the buffer as response
+    res.status(200).send(Buffer.from(buffer));
   } catch (error) {
-    console.error("Error finding files:", error);
+    console.error("Error processing request:", error);
+    res.status(500).json({ error: "Server error" });
   }
 }
