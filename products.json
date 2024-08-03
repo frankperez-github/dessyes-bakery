@@ -1,10 +1,10 @@
 [
     {
       "id": 10,
-      "name": "Pan suave",
-      "description": "Pan redondo, fresco y suave.",
+      "name": "Bolsa de panes suaves",
+      "description": "8 panes redondos, frescos y suaves.",
       "image": "/bread.jpeg",
-      "unitPrice": 20,
+      "unitPrice": 160,
       "defaultQuant": 1
     },
     {
@@ -45,6 +45,14 @@
       "description": "Tartaletas de guayaba.",
       "image": "/tartaletas.jpeg",
       "unitPrice": 70,
+      "defaultQuant": 6
+    },
+    {
+      "id": 12,
+      "name": "Profiteroles",
+      "description": "Profiteroles con crema de vainilla y cobertura de chocolate.",
+      "image": "/Profiteroles.jpeg",
+      "unitPrice": 100,
       "defaultQuant": 6
     },
     {
