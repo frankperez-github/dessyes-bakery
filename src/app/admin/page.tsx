@@ -27,7 +27,7 @@ export default function AdminPanel()
     },[productMethod])
 
     useEffect(()=>{
-        if(products.length !== 0)
+        if(products && products.length>0)
         {
             setLoadedProducts(true)
         }

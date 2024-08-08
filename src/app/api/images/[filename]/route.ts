@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { createClient } from "@supabase/supabase-js";
+import { NextRequest } from "next/server";
 
 // Initialize Supabase client
 const supabase = createClient(
@@ -7,8 +8,8 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ""
 );
 
-export default async function GET(req: NextApiRequest, res: NextApiResponse) {
-  const { filename } = req.query;
+export default async function GET(req: NextRequest, { params }: { params: { filename: string } }, res: NextApiResponse) {
+  const { filename } = params;
 
   if (!filename || typeof filename !== "string") {
     return res.status(400).json({ error: "Filename is required and must be a string" });
