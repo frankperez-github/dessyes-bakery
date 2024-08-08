@@ -42,39 +42,58 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     let imageUrl = "";
     let formDataObject: any = {};
 
+    // Fetch the existing product data
+    const { data: existingProduct, error: fetchError } = await supabase
+      .from('Products')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (fetchError) {
+      console.error("Error fetching product:", fetchError);
+      return NextResponse.json({ error: "Failed to fetch product" }, { status: 500 });
+    }
+
+    // Process the incoming form data
     for (const [key, value] of Array.from(body.entries())) {
-      if (typeof value === "object") {
-        const imageName = Date.now() + "-" + value.name;
+      if (typeof value === "object" && value instanceof File) {
+        if (value.name) { // Check if an image was actually provided
+          const imageName = Date.now() + "-" + value.name;
 
-        const { data, error: uploadError } = await supabase.storage
-          .from("images")
-          .upload(imageName, value);
+          const { data, error: uploadError } = await supabase.storage
+            .from("images")
+            .upload(imageName, value);
 
-        if (uploadError) {
-          console.error("Error uploading file:", uploadError.message);
-          return NextResponse.json({ error: "Failed to upload image" }, { status: 500 });
+          if (uploadError) {
+            console.error("Error uploading file:", uploadError.message);
+            return NextResponse.json({ error: "Failed to upload image" }, { status: 500 });
+          }
+
+          const { data: urlData } = supabase.storage
+            .from("images")
+            .getPublicUrl(imageName);
+
+          formDataObject.image = urlData.publicUrl; // Set the new image URL
         }
-
-        const { data: urlData } = supabase.storage
-          .from("images")
-          .getPublicUrl(imageName);
-
-        imageUrl = urlData.publicUrl;
       } else {
         formDataObject[key] = value as string;
       }
     }
 
-    formDataObject.image = imageUrl;
+    // Merge existing product data with the new data
+    const updatedProduct = {
+      ...existingProduct,
+      ...formDataObject,
+    };
 
-    const { data: product, error } = await supabase
+    const { data: product, error: updateError } = await supabase
       .from('Products')
-      .update(formDataObject)
+      .update(updatedProduct)
       .eq('id', id)
       .single();
 
-    if (error) {
-      console.error("Error updating product:", error);
+    if (updateError) {
+      console.error("Error updating product:", updateError);
       return NextResponse.json({ error: "Failed to update product" }, { status: 500 });
     }
 
