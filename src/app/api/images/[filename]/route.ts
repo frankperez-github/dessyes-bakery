@@ -8,7 +8,7 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ""
 );
 
-export default async function GET(req: NextRequest, { params }: { params: { filename: string } }, res: NextApiResponse) {
+export async function GET(req: NextRequest, { params }: { params: { filename: string } }, res: NextApiResponse) {
   const { filename } = params;
 
   if (!filename || typeof filename !== "string") {
