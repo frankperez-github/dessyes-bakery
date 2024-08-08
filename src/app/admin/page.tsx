@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { json } from "stream/consumers";
 
 export default function AdminPanel()
 {
@@ -33,22 +34,24 @@ export default function AdminPanel()
         }
     },[products])
 
-    const onSubmitProduct = async (e:any) => {
-        e.preventDefault()
+    const onSubmitProduct = async (e: any) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        
         await toast.promise(
-            fetch(`${window.location.origin}/api/products/${selectedProduct?.id}`, {
-                method: productMethod,
-                body: new FormData(e.target)
-            }).then(response => {
-                return response.json();
-            }), {
-                pending: `${productMethod === "POST" ? "Creating" : productMethod === "PUT" ? "Updating" : "Deleting"} Product`,
-                success: `Product ${productMethod === "POST" ? "created" : productMethod === "PUT" ? "updated" : "deleted"} 👌`,
-                error: `There was an error 🤯`
-            }
+          fetch(`${window.location.origin}/api/products/${selectedProduct?.id}`, {
+            method: productMethod,
+            body: formData
+          }).then(response => {
+            return response.json();
+          }), {
+            pending: `${productMethod === "POST" ? "Creating" : productMethod === "PUT" ? "Updating" : "Deleting"} Product`,
+            success: `Product ${productMethod === "POST" ? "created" : productMethod === "PUT" ? "updated" : "deleted"} 👌`,
+            error: `There was an error 🤯`
+          }
         );
-        window.location.reload()
-    }
+        // window.location.reload()
+      }
 
     const [transportations, setTransportations] = useState([]);
     const [transportationMethod, setTransportationMethod] = useState("POST")

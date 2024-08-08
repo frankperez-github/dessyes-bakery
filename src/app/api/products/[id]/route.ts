@@ -31,25 +31,53 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
   }
 }
 
+
+
 export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
   const { id } = params;
 
   try {
-    const body = await req.json();
+    const body = await req.formData();
 
-    // Update product by ID in the PostgreSQL database
+    let imageUrl = "";
+    let formDataObject: any = {};
+
+    for (const [key, value] of Array.from(body.entries())) {
+      if (typeof value === "object") {
+        const imageName = Date.now() + "-" + value.name;
+
+        const { data, error: uploadError } = await supabase.storage
+          .from("images")
+          .upload(imageName, value);
+
+        if (uploadError) {
+          console.error("Error uploading file:", uploadError.message);
+          return NextResponse.json({ error: "Failed to upload image" }, { status: 500 });
+        }
+
+        const { data: urlData } = supabase.storage
+          .from("images")
+          .getPublicUrl(imageName);
+
+        imageUrl = urlData.publicUrl;
+      } else {
+        formDataObject[key] = value as string;
+      }
+    }
+
+    formDataObject.image = imageUrl;
+
     const { data: product, error } = await supabase
       .from('Products')
-      .update(body)
+      .update(formDataObject)
       .eq('id', id)
       .single();
 
     if (error) {
-      console.error("Error updating product:", error.message);
+      console.error("Error updating product:", error);
       return NextResponse.json({ error: "Failed to update product" }, { status: 500 });
     }
 
-    // Return the updated product as a JSON response
     return NextResponse.json({ product });
   } catch (error) {
     console.error("Error processing request:", error);
