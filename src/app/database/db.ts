@@ -3,14 +3,22 @@ import { Client } from "pg";
 // Use the connection string provided by Supabase
 const POSTGRES_URI = process.env.NEXT_PUBLIC_DB_URI;
 
-const connection = {
-  isConnected: 0,
-  client: null,
+// Define the type for the connection object
+type Connection = {
+  isConnected: number;
+  client: Client | null;
 };
 
-export const connect = async () => {
+// Connection object to maintain the state of the connection
+const connection: Connection = {
+  isConnected: 0,
+  client: null
+};
+
+// Function to connect to PostgreSQL
+export const connect = async (): Promise<Client> => {
   if (connection.isConnected) {
-    return connection.client;
+    return connection.client as Client;
   }
 
   if (!POSTGRES_URI) {
@@ -32,11 +40,12 @@ export const connect = async () => {
     return client;
   } catch (error) {
     console.error("Error connecting to PostgreSQL:", error);
-    throw new Error("Failed to connect to the database");
+    throw new Error("Failed to connect to the PostgreSQL database");
   }
 };
 
-export const disconnect = async () => {
+// Function to disconnect from PostgreSQL
+export const disconnect = async (): Promise<void> => {
   if (connection.isConnected === 0 || !connection.client) return;
 
   try {
