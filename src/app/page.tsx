@@ -125,14 +125,14 @@ export default function Home() {
           >
             {
               products.map((item, index) => {
-                if(item.priority+"" === index+"")
-                {
-                  return(
-                    <SwiperSlide className='pl-10' key={index}>
-                      <Item item={item} quant={1} order={order} setOrder={setOrder}/>
-                    </SwiperSlide>
-                  )
-                }
+                return(
+                  <SwiperSlide className='pl-10' key={index}>
+                    {
+                      products.filter(x=>x.priority ===  index)[0] &&
+                      <Item item={products.filter(x=>x.priority ===  index)[0]} quant={1} order={order} setOrder={setOrder}/>
+                    }
+                  </SwiperSlide>
+                )
               })
             }
           </Swiper>
