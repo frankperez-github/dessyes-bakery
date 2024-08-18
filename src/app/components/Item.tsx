@@ -26,7 +26,7 @@ function Item(props: {
             ...props.order.products.filter((product)=>product.name != prod.name), 
             {
                 "name": prod.name,
-                "quantity": quant*props.item.defaultQuant,
+                "quantity": quant*props.item?.defaultQuant,
                 "unitPrice": prod.unitPrice
             }]
         newOrder.map((prod)=>total+=prod.unitPrice*prod.quantity)
@@ -49,20 +49,20 @@ function Item(props: {
                 <CardMedia
                 component="img"
                 height="140"
-                image={`${props.item.image}`}
+                image={`${props.item?.image}`}
                 alt="bakery"
                 />
                 <CardContent>
                 <Typography gutterBottom variant="h5" component="div">
-                    {props.item.name}
+                    {props.item?.name}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                    {props.item.description}
+                    {props.item?.description}
                     <br />
-                    <span className=" font-bold">{props.item.defaultQuant}  unidad{props.item.defaultQuant > 1  ? "es"  : ''}</span>
+                    <span className=" font-bold">{props.item?.defaultQuant}  unidad{props.item?.defaultQuant > 1  ? "es"  : ''}</span>
                 </Typography>
                 <Typography gutterBottom variant="h6" className="text-[#85BB65] mt-5" component="div">
-                   ${props.item.unitPrice*props.item.defaultQuant}
+                   ${props.item?.unitPrice*props.item?.defaultQuant}
                 </Typography>
                 </CardContent>
             </CardActionArea>

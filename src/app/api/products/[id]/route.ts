@@ -123,7 +123,7 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
     // Delete the image file from Supabase storage
     const { error: deleteFileError } = await supabase.storage
       .from('images')
-      .remove([product.image]);
+      .remove([product?.image]);
 
     if (deleteFileError) {
       console.error("Error deleting image file:", deleteFileError.message);

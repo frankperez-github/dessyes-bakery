@@ -117,13 +117,13 @@ export default function AdminPanel()
             Promise.all(
               products.map(async (product: product) => {
                 const formData = new FormData();
-                formData.append('id', product.id);
-                formData.append('name', product.name);
-                formData.append('image', product.image);
-                formData.append('description', product.description);
-                formData.append('unitPrice', product.unitPrice);
-                formData.append('defaultQuant', product.defaultQuant);
-                formData.append('priority', product.priority);
+                formData.append('id', product?.id);
+                formData.append('name', product?.name);
+                formData.append('image', product?.image);
+                formData.append('description', product?.description);
+                formData.append('unitPrice', product?.unitPrice);
+                formData.append('defaultQuant', product?.defaultQuant);
+                formData.append('priority', product?.priority);
       
                 const response = await fetch(`${window.location.origin}/api/products/${product.id}`, {
                   method: 'PUT',
