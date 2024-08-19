@@ -161,7 +161,7 @@ export default function AdminPanel()
                     </select>
                         product:
                     {
-                        productMethod === "PUT" || productMethod === "DELETE"  
+                        productMethod !== "POST" && productMethod !== "GET"  
                             &&
                             <select name="" id="" onChange={(e)=>setSelectedProduct(products.filter((x:any)=>x.id == e.target.value)[0])}>
                                 <option value="default">Select Product</option>
