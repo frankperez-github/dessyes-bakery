@@ -25,12 +25,9 @@ export default function AdminPanel()
     const [selectedProduct, setSelectedProduct] = useState({id:"", name:"", image:"", description:"", unitPrice:"", defaultQuant:"", priority: ""})
 
     useEffect(()=>{
-        if(window)
-        {
-            fetch(`${window.location.origin}/api/products`)
-            .then(response => response.json())
-            .then(data => setProducts(data.products))
-        }
+        fetch(`${window.location.origin}/api/products`)
+        .then(response => response.json())
+        .then(data => setProducts(data.products))
         
     },[productMethod])
 

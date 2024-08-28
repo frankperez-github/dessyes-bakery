@@ -11,7 +11,6 @@ import clsx from "clsx";
 export default function Profile()
 {
     
-    if(!window) return
     const user = useAuth()
     const params = new URLSearchParams(window.location.search);
     const category = params.get('category');

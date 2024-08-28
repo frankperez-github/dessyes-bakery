@@ -77,7 +77,6 @@ export default function Home() {
 
 
   useEffect(()=>{
-    if(window)
       window.localStorage.setItem("order", JSON.stringify(order))
 
   },[order])
