@@ -1,8 +1,12 @@
 'use client'
 
+import { Switch } from "@mui/material";
+import Link from "next/link";
 import { useEffect, useState } from "react"
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { DataTable } from "../components/DataTable";
+import { GridColDef } from "@mui/x-data-grid";
 
 type product = {
     id: string,
@@ -21,31 +25,33 @@ export default function AdminPanel()
     const [selectedProduct, setSelectedProduct] = useState({id:"", name:"", image:"", description:"", unitPrice:"", defaultQuant:"", priority: ""})
 
     useEffect(()=>{
-        fetch(`${window.location.origin}/api/products`)
-        .then(response => response.json())
-        .then(data => setProducts(data.products))
+        if(window)
+        {
+            fetch(`${window.location.origin}/api/products`)
+            .then(response => response.json())
+            .then(data => setProducts(data.products))
+        }
         
     },[productMethod])
 
-
     const onSubmitProduct = async (e: any) => {
+        if(!window) return
         e.preventDefault();
         const formData = new FormData(e.target);
-        
         await toast.promise(
-          fetch(`${window.location.origin}/api/products/${selectedProduct?.id}`, {
-            method: productMethod,
-            body: formData
-          }).then(response => {
-            return response.json();
-          }), {
-            pending: `${productMethod === "POST" ? "Creating" : productMethod === "PUT" ? "Updating" : "Deleting"} Product`,
-            success: `Product ${productMethod === "POST" ? "created" : productMethod === "PUT" ? "updated" : "deleted"} 👌`,
-            error: `There was an error 🤯`
-          }
+            fetch(`${window.location.origin}/api/products/${selectedProduct?.id}`, {
+                method: productMethod,
+                body: formData
+            }).then(response => {
+                return response.json();
+            }), {
+                pending: `${productMethod === "POST" ? "Creating" : productMethod === "PUT" ? "Updating" : "Deleting"} Product`,
+                success: `Product ${productMethod === "POST" ? "created" : productMethod === "PUT" ? "updated" : "deleted"} 👌`,
+                error: `There was an error 🤯`
+            }
         );
         window.location.reload()
-      }
+    }
 
     const [transportations, setTransportations] = useState([]);
     const [transportationMethod, setTransportationMethod] = useState("POST")
@@ -104,7 +110,7 @@ export default function AdminPanel()
         const newPriority = e.target.value;
     
         // Update the array of products with the new priority
-        const updatedProducts = products.map((product:product) =>
+        const updatedProducts = products?.map((product:product) =>
           product.id === id ? { ...product, priority: newPriority } : product
         );
     
@@ -115,7 +121,7 @@ export default function AdminPanel()
         try {
           await toast.promise(
             Promise.all(
-              products.map(async (product: product) => {
+              products?.map(async (product: product) => {
                 const formData = new FormData();
                 formData.append('id', product?.id);
                 formData.append('name', product?.name);
@@ -136,46 +142,287 @@ export default function AdminPanel()
               })
             ),
             {
-              pending: 'Updating products...',
+              pending: 'Updating products?...',
               success: 'Products updated successfully!',
-              error: 'Failed to update products.',
+              error: 'Failed to update products?.',
             }
           );
         } catch (error) {
           console.error("Error updating products:", error);
         }
     };
+
+    const [orders, setOrders] = useState<any[]>([])
+    const [loadingOrders, setLoadingOrders] = useState(false)
+    const fetchOrders = async () => {
+        try {
+            const response = await fetch("/api/orders");
+            const data = await response.json();
+            setOrders(data.orders);
+            setLoadingOrders(false)
+        } catch (error) {
+            console.error("Error fetching orders:", error);
+        }
+    };
+    const fetchOrderProducts = async () => {
+        try
+        {
+            const updatedOrders = await Promise.all(
+                orders?.map(async (ord) => {
+                    const response = await fetch('/api/orderProducts/' + ord.id, {
+                        method: "GET"
+                    });
+                    const data = await response.json();
+                    return { ...ord, orderProducts: data.orderProducts };
+                })
+            );
+            setOrders(updatedOrders);
+        }
+        catch(e)
+        {
+            console.log(e)
+        }
+    };
+
+    
+    
+    useEffect(()=>{
+        if(!loadingOrders)
+        {
+            fetchOrderProducts()
+        }
+    },[loadingOrders])
+
+    const [paymentStatus, setPaymentStatus] = useState<any[]>([])
+    const fetchPaymentStatus = async () => {
+        try {
+            const response = await fetch("/api/paymentStatus");
+            const data = await response.json();
+            setPaymentStatus(data.paymentStatus);
+        } catch (error) {
+            console.error("Error fetching orders:", error);
+        }
+    };
+
+    const [orderStatus, setOrderStatus] = useState<any[]>([])
+    const fetchOrderStatus = async () => {
+        try {
+            const response = await fetch("/api/orderStatus");
+            const data = await response.json();
+            setOrderStatus(data.orderStatus);
+        } catch (error) {
+            console.error("Error fetching orders:", error);
+        }
+    };
+
+    useEffect(()=>{
+        fetchOrders()
+        setLoadingOrders(true)
+        fetchOrderStatus()
+        fetchPaymentStatus()
+    },[])
+
+    const handlePaymentStatusChange = async (row:any, e:any) =>{
+        if(!window) return
+        const {orderProducts, orderWithoutProducts} = row
+        const response = await fetch("/api/orders/"+row.id, 
+            {
+                method: "PUT",
+                body: JSON.stringify({...orderWithoutProducts, paymentStatus: e.target.value})
+            }
+        )
+        if(response.ok)
+        {
+            toast.success("Orden Actualizada")
+            window.location.reload()
+        }
+        else
+        {
+            toast.error("Ha ocurrido un error, intente otra vez.")
+        }
+    }
+    const handleOrderStatusChange = async (row:any, e:any) =>{
+        if(!window) return
+        const {orderProducts, orderWithoutProducts} = row
+        const response = await fetch("/api/orders/"+row.id, 
+            {
+                method: "PUT",
+                body: JSON.stringify({...orderWithoutProducts, orderStatus: e.target.value})
+            }
+        )
+        if(response.ok)
+        {
+            toast.success("Orden Actualizada")
+            window.location.reload()
+        }
+        else
+        {
+            toast.error("Ha ocurrido un error, intente otra vez.")
+        }
+    }
+    
+
+    const columns: GridColDef[] = [
+        { 
+          field: 'id', 
+          headerName: 'Número de orden', 
+          width: 300,
+          sortable: true,
+          renderCell: (params: any) => <p>{params.row.id}</p>,
+        },
+        {
+          field: 'orderProducts', 
+          headerName: 'Productos', 
+          width: 180, 
+          sortable: false,
+          renderCell: (params: any) => {
+            const productList = params.row.orderProducts
+              ?.map((prod: any) => `${prod.productName} x ${prod.quantity}`)
+              .join('<br/>');
+        
+            return (
+              <div className="row-cell">
+                <span dangerouslySetInnerHTML={{ __html: productList }} />
+              </div>
+            );
+          },
+        },
+        { 
+          field: 'totalAmount', 
+          headerName: 'Monto Total', 
+          width: 150, 
+          sortable: false,
+          renderCell: (params: any) => <p>{params.row.total}</p>,
+        },
+        { 
+          field: 'paymentMethod', 
+          headerName: 'Método de pago', 
+          width: 150, 
+          sortable: false,
+          renderCell: (params: any) => <p>{params.row.paymentMethod}</p>,
+        },
+        { 
+          field: 'paymentStatus', 
+          headerName: 'Estado del pago', 
+          width: 150, 
+          sortable: false,
+          renderCell: (params: any) => {
+            return (
+              <select
+                onChange={(e: any) => handlePaymentStatusChange(params.row, e)}
+              >
+                {paymentStatus?.map((paymSt: any, index: number) => (
+                  <option selected={paymSt.status === params.row.paymentStatus} key={index} value={paymSt.status}>
+                    {paymSt.status}
+                  </option>
+                ))}
+              </select>
+            );
+          }
+        },
+        { 
+          field: 'contactName', 
+          headerName: 'Nombre de contacto', 
+          sortable: true, 
+          width: 160, 
+          renderCell: (params: any) => <p>{params.row.contactName}</p>,
+        },
+        { 
+          field: 'contactPhone', 
+          headerName: 'Teléfono de contacto', 
+          width: 180, 
+          sortable: false,
+          renderCell: (params: any) => <a className="border-b-2 border-blue-600 text-blue-600" href={`tel:${params.row.contactPhone}`}>{params.row.contactPhone}</a>,
+        },
+        { 
+          field: 'deliveryAddress', 
+          headerName: 'Dirección de entrega', 
+          width: 400, 
+          sortable: false,
+          renderCell: (params: any) => <p>{params.row.deliveryAddress}</p>,
+        },
+        { 
+          field: 'orderStatus', 
+          headerName: 'Estado de la orden', 
+          width: 150, 
+          sortable: false,
+          renderCell: (params: any) => 
+          {
+            return (
+              <select
+                onChange={(e: any) => handleOrderStatusChange(params.row, e)}
+              >
+                {orderStatus?.map((ordSt: any, index: number) => (
+                  <option selected={ordSt.status === params.row.orderStatus} key={index} value={ordSt.status}>
+                    {ordSt.status}
+                  </option>
+                ))}
+              </select>
+            )
+          }    
+        }
+      ];
+      
+
     
     return(
         <div className="">
             <ToastContainer />
             <div className="fixed top-[90%] xl:left-[80%] lg:left-[80%] md:left-[80%] left-[65%]">
-                <a href="/" className="text-3xl">Go Home</a>
+                <a href="/" className="text-3xl border-2 border-black bg-gray-300 !z-40 p-5 rounded-lg">Ir a la vista de usuario</a>
             </div>
-            <div className=" xl:w-1/2 lg:w-1/2 md:w-1/2 w-10/12 my-32 mx-auto border-2 border-red-500 rounded-xl p-10">
-                <h1 className="my-4 font-bold text-xl">
+            <div className="w-[92%] my-32 mx-auto p-10">
+                <h1 className="my-4 font-bold text-lg">
+                    Órdenes pendientes:
+                </h1>
+                
+                <DataTable columns={columns} rows={orders.filter((x:Order)=>x.orderStatus === "Procesando")}/>
+            </div>
+            <div className="w-[92%] my-32 mx-auto p-10">
+                <h1 className="my-4 font-bold text-lg">
+                    Órdenes enviándose:
+                </h1>
+                
+                <DataTable columns={columns} rows={orders.filter((x:Order)=>x.orderStatus === "Enviando")}/>
+            </div>
+            <div className="w-[92%] my-32 mx-auto p-10">
+                <h1 className="my-4 font-bold text-lg">
+                    Órdenes entregadas:
+                </h1>
+                
+                <DataTable columns={columns} rows={orders.filter((x:Order)=>x.orderStatus === "Entregada")}/>
+            </div>
+            <div className="w-[92%] my-32 mx-auto p-10">
+                <h1 className="my-4 font-bold text-lg">
+                    Órdenes canceladas:
+                </h1>
+                
+                <DataTable columns={columns} rows={orders.filter((x:Order)=>x.orderStatus === "Cancelada")}/>
+            </div>
+            <div className="w-10/12 my-32 mx-auto border-2 border-red-500 rounded-xl p-10">
+                <h1 className="my-4 font-bold text-lg">
                     <select name="productMethod" id="" onChange={(e)=>{setProductMethod(e.target.value)}}>
-                        <option value="POST">Insert</option>
-                        <option value="PUT">Update</option>
-                        <option value="DELETE">Delete</option>
+                        <option value="POST">Insertar</option>
+                        <option value="PUT">Actualizar</option>
+                        <option value="DELETE">Borrar</option>
                     </select>
-                        product:
+                        producto:
                     {
                         productMethod !== "POST" && productMethod !== "GET"  
                             &&
-                            <select name="" id="" onChange={(e)=>setSelectedProduct(products.filter((x:any)=>x.id == e.target.value)[0])}>
+                            <select name="" id="" onChange={(e)=>setSelectedProduct(products?.filter((x:any)=>x.id == e.target.value)[0])}>
                                 <option value="default">Select Product</option>
                                 {
-                                    products.map((product:any, key)=>
+                                    products?.map((product:any, key)=>
                                         <option key={key} value={product.id} onClick={()=>setSelectedProduct(product)}>{product.name}</option>
                                     )
                                 }
                             </select>
                     }
                 </h1>
-                <form onSubmit={onSubmitProduct} name="createForm" className="w-full xl:grid lg:grid grid-cols-2 text-lg">
+                <form onSubmit={onSubmitProduct} name="createForm" className="w-full xl:grid lg:grid grid-cols-2 gap-4 text-lg">
                     <div className="xl:flex lg:flex flex-row my-10">
-                        <label className="mr-5" htmlFor="name">Nombre:</label>
+                        <label className="mr-2" htmlFor="name">Nombre:</label>
                         <input onChange={(e)=>{setSelectedProduct({
                             id: selectedProduct?.id,
                             name: e.target.value,
@@ -188,7 +435,7 @@ export default function AdminPanel()
                     </div>
 
                     <div className="xl:flex lg:flex flex-row my-10">
-                        <label className="mr-5" htmlFor="description">Descripción:</label>
+                        <label className="mr-2" htmlFor="description">Descripción:</label>
                         <input onChange={(e)=>{setSelectedProduct({
                             id: selectedProduct?.id,
                             name: selectedProduct?.name,
@@ -201,7 +448,7 @@ export default function AdminPanel()
                     </div>
 
                     <div className="xl:flex lg:flex flex-row my-10">
-                        <label className="mr-5" htmlFor="unitPrice">Precio unitario:</label>
+                        <label className="mr-2" htmlFor="unitPrice">Precio unitario:</label>
                         <input onChange={(e)=>{setSelectedProduct({
                             id: selectedProduct?.id,
                             name: selectedProduct?.name,
@@ -214,7 +461,7 @@ export default function AdminPanel()
                     </div>
 
                     <div className="xl:flex lg:flex flex-row my-10">
-                        <label className="mr-5" htmlFor="defaultQuant">Contenido de la ración:</label>
+                        <label className="mr-2" htmlFor="defaultQuant">Cantidad del paquete:</label>
                         <input onChange={(e)=>{setSelectedProduct({
                             id: selectedProduct?.id,
                             name: selectedProduct?.name,
@@ -227,7 +474,7 @@ export default function AdminPanel()
                     </div>
 
                     <div className="xl:flex lg:flex flex-row my-10">
-                        <label className="mr-5" htmlFor="image">Imagen:</label>
+                        <label className="mr-2" htmlFor="image">Imagen:</label>
                         <input className="border-2 w-full" type="file" name="image"/>
                     </div>
                     <div className="flex my-10 col-span-2">
@@ -240,15 +487,15 @@ export default function AdminPanel()
                     </div>
                 </form>
             </div>
-            <div className="xl:w-1/2 lg:w-1/2 md:w-1/2 w-10/12 my-32 mx-auto border-2 border-red-500 rounded-xl p-10">
-                <div className="my-4 font-bold text-xl flex">
+            <div className="w-10/12 my-32 mx-auto border-2 border-red-500 rounded-xl p-10">
+                <div className="my-4 font-bold text-lg flex">
                     <select name="productMethod" id="" onChange={(e)=>{setTransportationMethod(e.target.value)}}>
-                        <option value="POST">Insert</option>
-                        <option value="PUT">Update</option>
-                        <option value="DELETE">Delete</option>
+                        <option value="POST">Insertar</option>
+                        <option value="PUT">Actualizar</option>
+                        <option value="DELETE">Borrar</option>
                     </select>
-                    <h1 className="my-4 font-bold text-xl">
-                        transportation charge:
+                    <h1 className="my-4 font-bold text-lg">
+                        transportación:
                     </h1>
                     {
                         loadedTransportations  
@@ -263,9 +510,9 @@ export default function AdminPanel()
                             </select>
                     }
                 </div>
-                <form action="" name="createTransportation" onSubmit={(e)=>onSubmitTransportation(e)} className="w-full xl:grid lg:grid grid-cols-2 text-lg">
+                <form action="" name="createTransportation" onSubmit={(e)=>onSubmitTransportation(e)} className="w-full xl:grid lg:grid grid-cols-2 gap-4 text-lg">
                     <div className="xl:flex lg:flex flex-row my-10">
-                        <label className="mr-5" htmlFor="city">Municipio:</label>
+                        <label className="mr-2" htmlFor="city">Municipio:</label>
                         {
                             <input className="border-2" type="text" name="city" id="" value={selectedTransportation?.city} onChange={(e)=>{setSelectedTransportation({
                                 id: selectedTransportation?.id,
@@ -276,7 +523,7 @@ export default function AdminPanel()
                     </div>
 
                     <div className="xl:flex lg:flex flex-row my-10">
-                        <label className="mr-5" htmlFor="transportation_price">Precio:</label>
+                        <label className="mr-2" htmlFor="transportation_price">Precio:</label>
                         {
                             <input className="border-2" type="number" step="any" name="transportation_price" id="" value={selectedTransportation?.transportation_price} onChange={(e)=>{setSelectedTransportation({
                                 id: selectedTransportation?.id,
@@ -298,20 +545,22 @@ export default function AdminPanel()
 
 
             </div>
-            <div className="xl:w-1/2 lg:w-1/2 md:w-1/2 w-10/12 my-32 mx-auto border-2 border-red-500 rounded-xl p-10">
+            <div className="w-10/12 my-32 mx-auto border-2 border-red-500 rounded-xl p-10">
                 <table className="w-1/2 justify-between mx-auto">
                     <thead>
-                        <th>Prioridad:</th>
-                        <th>Nombre:</th>
+                        <tr>
+                            <th>Prioridad:</th>
+                            <th>Nombre:</th>
+                        </tr>
                     </thead>
                     <tbody>
                         {
-                            products.map((p:any, key)=>
+                            products?.map((p:any, key)=>
                                 <tr key={key} className="text-center">
                                     <td>
                                         <select name="" defaultValue={p.priority} id="" onChange={(e)=>{handlePriorityChange(e, p.id)}}>
                                             {
-                                                products.map((prod, i)=>(
+                                                products?.map((prod, i)=>(
                                                     <option value={i} key={i} >
                                                         {i}
                                                     </option>
@@ -329,7 +578,7 @@ export default function AdminPanel()
                 </table>
                 <div className="flex mt-10 col-span-2">
                     <button onClick={handlePrioritySubmit} className="border-2 w-1/3 p-2 rounded-lg bg-red-500 text-white mx-auto">
-                        Save
+                        Guardar
                     </button>
                 </div>
             </div>

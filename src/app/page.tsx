@@ -6,325 +6,132 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import Item from './components/Item';
-import Image from 'next/image';
-import { AppBar, Toolbar, Button, CircularProgress } from '@mui/material';
-import { IconTrash } from '@tabler/icons-react';
+import { CircularProgress } from '@mui/material';
+import Cart from './components/Cart';
+import Layout from './components/Layout';
+import Image from 'next/image'
 
 
 
 export default function Home() {
 
   const [showOrder, setShowOrder] = useState(false)
-  const [order, setOrder] = useState<{"products": any[], "total": number}>({"products":[], "total": 0})
-  const [isLoading, setIsLoading] = useState(false)
-  const [message, setMessage]= useState("")
-  
-  const [paymentMethod, setPaymentMethod] = useState("Enzona")
-  const [copiedCard, setCopiedCard] = useState(false)
-  const [copiedPhone, setCopiedPhone] = useState(false)
 
-  const [deliveryAddress, setDeliveryAddress] = useState("")
-  const [selectedTransportation, setSelectedTransportation] = useState<{city:string, transportation_price:number}>({city:"", transportation_price:0})
-  
-  
-  useEffect(()=>{
-    let newMessage = "Detalles de la orden:"
-    order.products.map((prod)=>
-    {
-      newMessage+= `%0a🍰 ${prod.name} x${prod.quantity}  ----> 💰${prod.quantity*prod.unitPrice}cup`
-    })
-    newMessage += "%0a---------------------"
-    newMessage+=`%0a💰Subtotal: ${order.total}cup`
-    newMessage+=`%0a💰Costo envio: ${selectedTransportation?.transportation_price}cup`
-    newMessage+=`%0a💰Monto Total: ${order.total + selectedTransportation?.transportation_price}cup`
-    newMessage+=`%0a Método de Pago: ${paymentMethod}`
-    if(selectedTransportation?.transportation_price !== 0)
-      {
-        newMessage+=`%0a🚚Direccion de entrega: ${deliveryAddress}`
-      }
-      setMessage(newMessage)
-    },[order, selectedTransportation, deliveryAddress])
-    
-  const removeFromOrder=(prod: any)=>{
-    let total = 0;
-    const newOrder =[...order.products.filter((product)=>product.name != prod.name)]
-    newOrder.map((prod)=>total+=prod.unitPrice*prod.quantity)
-    setOrder(
-      {
-        "products": newOrder as any,
-        "total": total
-      } 
-    )
-  }
-  
-  const handleSubmit=()=>{
-    if(selectedTransportation?.city !== "") 
-      {
-        setIsLoading(true)
-        window.location.replace(`https://wa.me/+5353103058?text=${message}`)
-      }
-      else
-      {
-        alert("Seleccione un municipio")
-      }
-    }
-    
+  const [order, setOrder] = useState<{"products": any[], "total": number}>(window.localStorage.getItem("order") ? JSON.parse(window.localStorage.getItem("order")!) : {"products": [], "total": 0});
+
   const [products, setProducts] = useState<any[]>([])
   const [transportations, setTransportations] = useState<{city:string, transportation_price:number}[]>([])
-  
-  useEffect(()=>{
-    fetch("/api/transportations", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json"
-      }
-    }).then(
-      res=>res.json()
-    ).then(
-      data=>setTransportations(data instanceof Array ? data : data.transportations)
-    )
 
-    fetch("/api/products", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json"
-      }
-    }).then(res=>res.json()).then(
-      data=>setProducts(data instanceof Array ? data : data.products)
-    )
+  const [MLCPrice, setMLCPrice] = useState<number>()
+  const [USDPrice, setUSDPrice] = useState<number>()
+
+  const [isLoading, setIsLoading] = useState(false)
+
+  useEffect(() => {
+      const fetchCurrencies = async () => {
+          try {
+              const response = await fetch("https://api.cambiocuba.money/api/v2/x-rates?msg=false&x_cur=CUP&token=aCY78gC3kWRv1pR7VfgSlg");
+              if (!response.ok) {
+                  throw new Error(`HTTP error! status: ${response.status}`);
+              }
+              const data = await response.json();
+              setMLCPrice(data.statistics["MLC.CUP"]["median"]);
+              setUSDPrice(data.statistics["USD.CUP"]["median"]);
+          } catch (error) {
+              console.error('There was a problem with the fetch operation:', error);
+          }
+      };
+  
+      fetchCurrencies();
+  }, []);
+
+  useEffect(()=>{
+      setIsLoading(true)
+      fetch("/api/transportations", {
+          method: "GET",
+          headers: {
+          "Content-Type": "application/json"
+          }
+      }).then(
+          res=>res.json()
+      ).then(
+          data=>{
+            setTransportations(data instanceof Array ? data : data.transportations)
+            setIsLoading(false)
+          }
+      )
+      setIsLoading(true)
+
+      fetch("/api/products", {
+          method: "GET",
+          headers: {
+          "Content-Type": "application/json"
+          }
+      }).then(res=>res.json()).then(
+          data=>{
+            setProducts(data instanceof Array ? data : data.products)
+            setIsLoading(false)
+          }
+      )
   },[])
 
-  useEffect(()=>{
-    if(isLoading)
-    {
-      setTimeout(()=>setIsLoading(false), 5000)
-    }
-  },[isLoading])
 
-  const confirmationPhone = "53103058"
-  const confirmationCard = "9205 9598 7370 9944"
+  useEffect(()=>{
+    if(window)
+      window.localStorage.setItem("order", JSON.stringify(order))
+
+  },[order])
+  
+  
 
   return (
-      <main className="bg-[#fff]">
-        <AppBar position="static">
-          <Toolbar sx={{backgroundColor: "#fff"}} className='lg:flex-row flex flex-col px-32'>
-            <div className="w-[85%] lg:w-full mx-auto my-5 xl:ml-auto xl:mb-5">
-              <Image src="/logo.webp" className='' height={110} width={160} alt="logo"/>
-              <h1 className='text-black text-center mt-2 text-lg'>Dessye&apos;s</h1>
-            </div>
-          </Toolbar>
-        </AppBar>
-        <div className="lg:block hidden">
-          <Swiper
-          className='swiper'
-          modules={[Navigation, Pagination, Scrollbar, A11y]}
-          spaceBetween={50}
-          slidesPerView={3}
-          navigation
-          pagination={{ clickable: true }}
-          >
-            {
-              products.map((item, index) => {
-                return(
-                  <SwiperSlide className='pl-10' key={index}>
-                    {
-                      products.filter(x=>x.priority ===  index)[0] &&
-                      <Item item={products.filter(x=>x.priority ===  index)[0]} quant={1} order={order} setOrder={setOrder}/>
-                    }
-                  </SwiperSlide>
-                )
-              })
-            }
-          </Swiper>
-        </div>
-        <div className="lg:hidden block">
-            {
-              products.map((item, index) => {
-                return(
-                  <SwiperSlide className='pl-10' key={index}>
-                    {
-                      products.filter(x=>x.priority ===  index)[0] &&
-                      <Item item={products.filter(x=>x.priority ===  index)[0]} quant={1} order={order} setOrder={setOrder}/>
-                    }
-                  </SwiperSlide>
-                )
-              })
-            }
-        </div>
-        {
-          showOrder &&
-          <div className="">
-            <div className="bg-[#ffffffe3] fixed w-full h-full z-10 top-0"></div>
-            <div className="OrderList flex flex-col justify-between absolute top-[10%] w-[80%] mx-[10%] z-10 bg-[#f0f0f0] p-[5%] rounded-xl">
-              <div className="">
-                <h2 className='font-bold text-xl mb-5'>Compruebe su orden:</h2>
+    <Layout cartCount={order.products.length} setShowOrder={setShowOrder}>
 
-                <table id='orderTable' className='w-full px-2 text-center mb-12'>
-                  <thead className='text-black font-bold'>
-                    <tr>
-                      <td>Producto</td>
-                      <td>Cantidad</td>
-                      <td>Precio</td>
-                      <td></td>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {order.products.map((product, key)=>{
-                      return(
-                          <tr className='text-sm text-center' key={key}>
-                            <td>
-                            {product.name}
-                            </td>
-                            <td>
-                            {product.quantity}
-                            </td>
-                            <td>
-                            {product.unitPrice * product.quantity}
-                            </td>
-                            <td>
-                              <IconTrash  onClick={()=>removeFromOrder(product)}/>
-                            </td>
-                          </tr>
-                      )
-                  })}
-                    <br />
-                    <tr className='border-t-2 border-[#c6c6c6]'>
-                      <td><h1>Municipio:</h1></td>
-                      <td></td>
-                      <select name="" id="" onChange={(e)=>setSelectedTransportation(transportations.filter((t)=>t.city === e.target.value)[0])}>
-                        <option value="" className='font-bold'  id="defaultCity">Seleccione</option>
-                        {
-                          transportations.map((transp)=>(
-                            <option key={transp.city} value={transp.city}>{transp.city}</option>
-                          ))
-                          
-                        }
-                      </select>
-                    </tr>
-                    <tr className=' border-[#c6c6c6]'>
-                      <td className='text-left'>Subtotal:</td>
-                      <td></td>
-                      <td className='font-bold text-right'>${order.total}</td>
-                    </tr>
-                    <tr >
-                      <td className='text-left'>Envio:</td>
-                      <td></td>
-                      <td className='font-bold text-right'>${selectedTransportation?.transportation_price}</td>
-                    </tr>
-                    <tr className=' border-[#c6c6c6]'>
-                      <td className='text-left'>Total:</td>
-                      <td></td>
-                      <td className='font-bold text-right'>${order.total + selectedTransportation?.transportation_price}</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-              
+      {
+        !isLoading?
+        <main className="bg-[#fff]">
+          
+          <div className="lg:flex xl:flex flex-wrap block">
               {
-                (selectedTransportation?.city !== "UH" && selectedTransportation?.city !== "") &&
-                <div className="mb-10">
-                  <label htmlFor="">Dirección de entrega:</label>
-                  <textarea onChange={(e)=>setDeliveryAddress(e.target.value)} className='w-full'/>
-                </div>
+                products?.map((item, index) => {
+                  return(
+                    <SwiperSlide className='lg:!w-1/4 xl:!w-1/4 w-full pl-10' key={index}>
+                      {
+                        products?.filter(x=>x.priority ===  index)[0] &&
+                        <Item MLCPrice={MLCPrice!} USDPrice={USDPrice!} item={products?.filter(x=>x.priority ===  index)[0]} quant={1} order={order} setOrder={setOrder}/>
+                      }
+                    </SwiperSlide>
+                  )
+                })
               }
-
-              <div className="">
-                <h2 className='font-bold'>Seleccione el metodo de pago:</h2>
-                <select name="" id="" onChange={(e)=>setPaymentMethod(e.target.value)}>
-                  <option value="Enzona">QR Enzona</option>
-                  <option value="Transfermovil">QR Transfermovil</option>
-                  <option value="Tarjeta">Número de tarjeta</option>
-                  <option value="Efectivo">Efectivo a la entrega</option>
-                </select>
-                {
-                  paymentMethod === "Efectivo" &&
-                  <h2 className='text-red-500 font-bold my-5'>Este método de pago solo es permitido si no es su primera compra.</h2>
-                }
-                {
-                  paymentMethod === "Tarjeta" ?
-                    <div className="my-10">
-                      <h2>Tarjeta:</h2>
-                      <div className="flex justify-evenly">
-                        <h2>{confirmationCard}</h2>
-                        <button onClick={()=>{navigator.clipboard.writeText(confirmationCard); setCopiedCard(true); setCopiedPhone(false)}}>{copiedCard ? "✅" : "copiar"}</button>
-                      </div>
-
-                      <h2>Teléfono:</h2>
-                      <div className="flex justify-evenly">
-                        <h2>{confirmationPhone}</h2>
-                        <button onClick={()=>{navigator.clipboard.writeText(confirmationPhone); setCopiedCard(false); setCopiedPhone(true)}}>{copiedPhone ? "✅" : "copiar"}</button>
-                      </div>
-                    </div>
-                  :
-                  paymentMethod === "Enzona" ?
-                    <div className="mx-auto w-2/3 my-10">
-                      <Image src="/enzona.jpeg" fill className='image' alt="QR enzona"/>
-                      <h2 className='mt-5'>Confirmar a:</h2>
-                      <div className="flex justify-evenly">
-                        <h2>{confirmationPhone}</h2>
-                        <button onClick={()=>{navigator.clipboard.writeText(confirmationPhone); setCopiedCard(false); setCopiedPhone(true)}}>{copiedPhone ? "✅" : "copiar"}</button>
-                      </div>
-                    </div>
-                    
-                  :
-                  paymentMethod === "Transfermovil" &&
-                    <div className="mx-auto w-2/3 my-10">
-                      <Image src="/transfermovil.jpeg" fill className='image' alt="QR enzona"/>
-                    </div>
-                }
-              </div>
-              
-              <div className="flex justify-between w-full mt-4">
-                <Button 
-                  size="large" 
-                  color="success" 
-                  onClick={()=>{setShowOrder(false)}}
-                  className='w-[40%] bg-[#fff] text-black' 
-                >
-                    Cancelar
-                </Button>
-                <Button 
-                  size="large" 
-                  color="success" 
-                  sx={{
-                    '.MuiButton-root:hover': {
-                      backgroundColor:  "#FFA500 !important"
-                    } 
-                  }}
-                  onClick={()=>handleSubmit()}
-                  className='bg-[#FFA500] text-black w-[40%] rounded-lg' 
-                >
-                  {
-                    paymentMethod === "Efectivo" ? "Listo!" : "Ya pagué!"
-                  }
-                    
-                </Button>
-              </div>
+          </div>
+          {
+            showOrder &&
+            <div className="">
+              <Cart 
+                products={products} 
+                transportations={transportations} 
+                setShowOrder={setShowOrder}
+                order={order}
+                setOrder={setOrder}
+                MLCPrice={MLCPrice}
+                USDPrice={USDPrice}
+              />
             </div>
+          }
+          
+        </main>
+        :
+        <div className="">
+          <div className="w-[85%] fixed  top-[20%] left-[10%] lg:left-2 xl:left-0 z-30 flex flex-col items-center lg:w-full mx-auto my-5 xl:ml-auto xl:mb-5">
+              <Image src={process.env.NEXT_PUBLIC_LOGO || ""} className='' height={110} width={160} alt="logo"/>
           </div>
-        }
-
-        {
-          order.products.length > 0 &&
-          <Button 
-            size="large" 
-            color="success" 
-            onClick={()=>{setShowOrder(true); window.scrollTo(0,0)}}
-            sx={{
-              position: 'absolute'
-            }}  
-            className='fixed top-[90%] left-[60%] bg-[#FFA500] text-black' 
-          >
-              Ver pedido ({order.products.length})
-          </Button>
-        }
-        {
-          isLoading &&
-          <div className="loading fixed top-[0%] left-[0%] pt-[90%] pl-[48%] bg-slate-100 w-full h-full z-20">
-            <CircularProgress />
-            <h2 className='-ml-[62%] mt-5'>Vamos a procesar su pedido, un momento...</h2>
+          <div className="loading fixed top-[0%] left-[0%] pt-[90%] md:pt-[50%] lg:pt-[35%] xl:pt-[20%] pl-[49%] bg-slate-100 w-full h-full z-20">
+              <CircularProgress />
+              <h2 className='-ml-[62%] md:-ml-[45%] lg:-ml-44 xl:-ml-44 mt-5'>Bienvenido, espere mientras se cargan los productos...</h2>
           </div>
-        }
-      </main>
+        </div>
+      }
+    </Layout>
   );
 }

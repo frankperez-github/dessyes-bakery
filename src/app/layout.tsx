@@ -5,8 +5,8 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Dessye's Bakery",
-  description: "Home Bakery",
+  title: process.env.NEXT_PUBLIC_NAME,
+  description: "Website made by criollos.tech",
 };
 
 export default function RootLayout({
