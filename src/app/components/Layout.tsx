@@ -55,7 +55,7 @@ export default function Layout({ children, cartCount = 0, setShowOrder }: any) {
                     <div className="w-28 flex justify-between py-4 cursor-pointer ml-auto mr-10">
                         {user ? (
                             <h1 className='w-[42%] h-12 pl-1.5 pt-1 border-2 rounded-full text-3xl' onClick={handleProfileRedirect}>
-                                {user.displayName.split(' ').length > 1 ? user.displayName.split(' ')[0][0] + "" + user.displayName.split(' ')[1][0] : user.displayName.split(' ')[0][0]}
+                                {user.displayName?.split(' ').length > 1 ? user.displayName?.split(' ')[0][0] + "" + user.displayName?.split(' ')[1][0] : user.displayName?.split(' ')[0][0]}
                             </h1>
                         ) : (
                             <IconUserFilled size="40%" onClick={handleProfileRedirect} />
