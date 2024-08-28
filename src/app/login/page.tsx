@@ -19,7 +19,10 @@ export default function Register()
         e.preventDefault()
         try {
             await signInWithEmail(email, password);
-            if(window) window.location.replace("/")
+            if(typeof(window) !== undefined)
+            {
+                window.location.replace("/")
+            } 
         } catch (error:any) {
             console.error('Error signing in: '+error.message);
         }

@@ -13,7 +13,7 @@ export default function Profile()
     
     const user = useAuth()
     
-    const params = window && new URLSearchParams(window.location.search);
+    const params = typeof(window) !== undefined ? new URLSearchParams(window.location.search): new URLSearchParams();
     const category = params.get('category');
     const [userOrders, setUserOrders] = useState<Order[]>()
     
@@ -21,7 +21,10 @@ export default function Profile()
         e.preventDefault()
         try {
             await signOut();
-            if(window) window.location.replace('/')
+            if(typeof(window) !== undefined)
+            {
+                window.location.replace('/')
+            }
         } catch (error:any) {
             console.error('Error signing out:', error.message);
         }

@@ -41,7 +41,10 @@ export default function Register()
                     phone,
                 }
             });
-            if(window) window.location.replace('/profile?category=Profile')
+            if(typeof(window) !== undefined)
+            {
+                window.location.replace('/profile?category=Profile')
+            }
         } catch (error:any) {
             console.error('Ha habido un error');
         }
