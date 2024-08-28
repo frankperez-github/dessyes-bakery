@@ -5,6 +5,7 @@ import { useState } from "react";
 import { IconButton, InputAdornment, TextField } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { toast } from "react-toastify";
+import clsx from "clsx";
 
 export default function Register()
 {
@@ -78,6 +79,11 @@ export default function Register()
                     }}
                 />
                 
+                
+                <div className="w-[80%] mx-auto justify-between">
+                    <button className={clsx(`border-2 w-full p-2 rounded-lg my-5 bg-${process.env.NEXT_PUBLIC_PRIMARY_COLOR} text-white font-bold`)}>Actualizar Perfil</button>
+                    <p className="w-full">¿No tiene una cuenta aún? <br /><a href="/register" className="text-blue-700 border-b-2 border-blue-700">Crear cuenta</a></p>
+                </div>
             </form>
         </Layout>
     )
