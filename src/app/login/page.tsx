@@ -16,11 +16,10 @@ export default function Register()
 
 
     const handleSignIn = async (e:any) => {
-        if(!window) return
         e.preventDefault()
         try {
             await signInWithEmail(email, password);
-            window.location.replace("/")
+            if(window) window.location.replace("/")
         } catch (error:any) {
             console.error('Error signing in: '+error.message);
         }

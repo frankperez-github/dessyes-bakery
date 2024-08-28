@@ -18,11 +18,10 @@ export default function Profile()
     const [userOrders, setUserOrders] = useState<Order[]>()
     
     const handleSignOut = async (e:any) => {
-        if(!window) return
         e.preventDefault()
         try {
             await signOut();
-            window.location.replace('/')
+            if(window) window.location.replace('/')
         } catch (error:any) {
             console.error('Error signing out:', error.message);
         }

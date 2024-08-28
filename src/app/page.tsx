@@ -17,7 +17,7 @@ export default function Home() {
 
   const [showOrder, setShowOrder] = useState(false)
 
-  const [order, setOrder] = useState<{"products": any[], "total": number}>(window.localStorage.getItem("order") ? JSON.parse(window.localStorage.getItem("order")!) : {"products": [], "total": 0});
+  const [order, setOrder] = useState<{"products": any[], "total": number}>(window && window.localStorage.getItem("order") ? JSON.parse(window.localStorage.getItem("order")!) : {"products": [], "total": 0});
 
   const [products, setProducts] = useState<any[]>([])
   const [transportations, setTransportations] = useState<{city:string, transportation_price:number}[]>([])
@@ -77,8 +77,7 @@ export default function Home() {
 
 
   useEffect(()=>{
-      window.localStorage.setItem("order", JSON.stringify(order))
-
+    if(window) window.localStorage.setItem("order", JSON.stringify(order))
   },[order])
   
   

@@ -31,7 +31,6 @@ export default function Register()
     },[user])
 
     const handleUserUpdate = async (e:any) => {
-        if(!window) return
         e.preventDefault()
         try {
             await updateUser({
@@ -42,7 +41,7 @@ export default function Register()
                     phone,
                 }
             });
-            window.location.replace('/profile?category=Profile')
+            if(window) window.location.replace('/profile?category=Profile')
         } catch (error:any) {
             console.error('Ha habido un error');
         }
