@@ -32,11 +32,10 @@ export default function AdminPanel()
     },[productMethod])
 
     const onSubmitProduct = async (e: any) => {
-        if(!window) return
         e.preventDefault();
         const formData = new FormData(e.target);
         await toast.promise(
-            fetch(`${window.location.origin}/api/products/${selectedProduct?.id}`, {
+            fetch(`${(typeof(window) !== undefined) ? window.location.origin : ''}/api/products/${selectedProduct?.id}`, {
                 method: productMethod,
                 body: formData
             }).then(response => {
@@ -47,7 +46,10 @@ export default function AdminPanel()
                 error: `There was an error 🤯`
             }
         );
-        window.location.reload()
+        if(typeof(window) !== undefined)
+        {
+            window.location.reload()
+        }
     }
 
     const [transportations, setTransportations] = useState([]);
@@ -100,7 +102,10 @@ export default function AdminPanel()
                 error: `There was an error 🤯`
             }
         );
-        window.location.reload()
+        if(typeof(window) !== undefined)
+        {
+            window.location.reload()
+        }
     }
 
     const handlePriorityChange = (e:any, id:any) => {
@@ -231,7 +236,10 @@ export default function AdminPanel()
         if(response.ok)
         {
             toast.success("Orden Actualizada")
-            window.location.reload()
+            if(typeof(window) !== undefined)
+            {
+                window.location.reload()
+            }
         }
         else
         {
@@ -250,7 +258,10 @@ export default function AdminPanel()
         if(response.ok)
         {
             toast.success("Orden Actualizada")
-            window.location.reload()
+            if(typeof(window) !== undefined)
+            {
+                window.location.reload()
+            }
         }
         else
         {
