@@ -11,10 +11,13 @@ export default function useAuth ()
     {
         getUser().then(
             data=>{
-                setUser({...data.data.user?.user_metadata, id: data.data.user?.id})
+                if(data.data.user?.user_metadata)
+                {
+                    setUser({...data.data.user?.user_metadata, id: data.data.user?.id})
+                }
             }
         )
     }
     
-    return user
+    return {user, setUser}
 }

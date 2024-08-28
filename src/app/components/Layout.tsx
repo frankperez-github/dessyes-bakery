@@ -9,7 +9,7 @@ import clsx from 'clsx';
 import useIsClient from '../hooks/useIsClient';
 
 export default function Layout({ children, cartCount = 0, setShowOrder }: any) {
-    const user = useAuth();
+    const {user} = useAuth();
     const isClient = useIsClient(); 
     function sleep(time: any) {
         return new Promise((resolve) => setTimeout(resolve, time));

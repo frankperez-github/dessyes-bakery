@@ -10,7 +10,7 @@ import clsx from "clsx";
 
 export default function Register()
 {
-    const user = useAuth()
+    const { user } = useAuth()
 
 
     const [email, setEmail] = useState("")

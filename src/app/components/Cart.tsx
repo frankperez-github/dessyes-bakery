@@ -59,7 +59,7 @@ export default function Cart({transportations, setShowOrder, order, setOrder, ML
     const CUPCard = "9227 9598 7524 2567"
     const MLCCard = "9235 9598 7053 2996"
 
-    const user = useAuth()
+    const { user } = useAuth()
 
     const handleSubmit = async () =>{
         if(!window) return
@@ -117,7 +117,10 @@ export default function Cart({transportations, setShowOrder, order, setOrder, ML
 
             if(responseOrder.ok && responseProds.ok)
             {
-              window.location.replace(`https://wa.me/+5353103058?text=${message}`)
+              if(typeof(window) !== undefined)
+              {
+                window.location.replace(`https://wa.me/+5353103058?text=${message}`)
+              }
               setOrder({"products": [], "total": 0})
               setIsLoading(false)
             }

@@ -10,7 +10,7 @@ import OrdersCardSkeletons from "../components/OrdersCardsSkeleton";
 import clsx from "clsx";
 
 export default function Profile() {
-    const user = useAuth();
+    const { user, setUser } = useAuth();
     const [userOrders, setUserOrders] = useState<Order[]>();
     const [category, setCategory] = useState<string | null>(null);
 
@@ -18,6 +18,7 @@ export default function Profile() {
         e.preventDefault();
         try {
             await signOut();
+            setUser(undefined)
             location.replace('/');
         } catch (error: any) {
             console.error('Error signing out:', error.message);
