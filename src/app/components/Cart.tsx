@@ -305,7 +305,10 @@ export default function Cart({transportations, setShowOrder, order, setOrder, ML
                   size="large" 
                   color="success" 
                   onClick={()=>handleSubmit()}
-                  className={clsx(`!bg-${process.env.NEXT_PUBLIC_PRIMARY_COLOR} hover:!bg-${process.env.NEXT_PUBLIC_PRIMARY_COLOR} !text-black w-[40%] lg:w-1/3 xl:w-1/3 rounded-lg`)} 
+                  style={{
+                    backgroundColor: process.env.NEXT_PUBLIC_PRIMARY_COLOR
+                  }}
+                  className={clsx(`hover !text-black w-[40%] lg:w-1/3 xl:w-1/3 rounded-lg`)} 
                 >
                   {
                     paymentMethod === "Efectivo" ? "Listo!" : "Ya pagué!"

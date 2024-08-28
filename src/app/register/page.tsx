@@ -81,7 +81,14 @@ export default function Register()
                 
                 
                 <div className="w-[80%] mx-auto justify-between">
-                    <button className={clsx(`border-2 w-full p-2 rounded-lg my-5 bg-${process.env.NEXT_PUBLIC_PRIMARY_COLOR} text-white font-bold`)}>Crear cuenta</button>
+                    <button 
+                        style={{
+                            backgroundColor: process.env.NEXT_PUBLIC_PRIMARY_COLOR,
+                        }}
+                        className={clsx(`border-2 w-full p-2 rounded-lg my-5 text-white font-bold`)}
+                        >
+                            Crear cuenta
+                    </button>
                     <p className="w-full">¿Ya tiene una cuenta? <br /><a href="/login" className="text-blue-700 border-b-2 border-blue-700">Iniciar sesion</a></p>
                 </div>
             </form>

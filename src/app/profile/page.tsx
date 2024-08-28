@@ -100,7 +100,16 @@ export default function Profile() {
                             </div>
                         </div>
                         <div className="flex justify-evenly mb-10">
-                            <button className={clsx(`w-[40%] lg:w-1/4 xl:w-1/4  px-5 py-2 rounded-lg border-2 border-${process.env.NEXT_PUBLIC_PRIMARY_COLOR} bg-${process.env.NEXT_PUBLIC_PRIMARY_COLOR} text-white font-bold`)} onClick={() => location.replace('/editProfile')}>Editar Perfil</button>
+                            <button
+                                style={{
+                                    backgroundColor: process.env.NEXT_PUBLIC_PRIMARY_COLOR,
+                                    borderColor: process.env.NEXT_PUBLIC_PRIMARY_COLOR
+                                }}
+                                className={clsx(`w-[40%] lg:w-1/4 xl:w-1/4  px-5 py-2 rounded-lg border-2 text-white font-bold`)} 
+                                onClick={() => location.replace('/editProfile')}
+                                >
+                                    Editar Perfil
+                            </button>
                             <button className="w-[40%] lg:w-1/4 xl:w-1/4 px-5 py-2 rounded-lg border-2 border-red-600 bg-red-600 text-white font-bold" onClick={handleSignOut}>Cerrar Sesión</button>
                         </div>
                     </div>

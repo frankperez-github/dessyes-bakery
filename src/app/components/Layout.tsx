@@ -9,8 +9,13 @@ import clsx from 'clsx';
 import useIsClient from '../hooks/useIsClient';
 
 export default function Layout({ children, cartCount = 0, setShowOrder }: any) {
-    const {user} = useAuth();
-    const isClient = useIsClient(); 
+    const { user } = useAuth();
+    const isClient = useIsClient();
+
+    const secondaryColorBorder = "border-"+process.env.NEXT_PUBLIC_SECONDARY_COLOR || 'border-black';
+    const logoSrc = process.env.NEXT_PUBLIC_LOGO || '';
+    const siteName = process.env.NEXT_PUBLIC_NAME || 'Nombre Negocio';
+
     function sleep(time: any) {
         return new Promise((resolve) => setTimeout(resolve, time));
     }
@@ -39,11 +44,11 @@ export default function Layout({ children, cartCount = 0, setShowOrder }: any) {
 
     return (
         <div className="">
-            <AppBar position="sticky" className={clsx(`!bg-${process.env.NEXT_PUBLIC_PRIMARY_COLOR} !z-10`)}>
+            <AppBar position="sticky" style={{backgroundColor: process.env.NEXT_PUBLIC_PRIMARY_COLOR}} className='!z-10'>
                 <Toolbar sx={{ backgroundColor: "#fff" }} className='lg:flex-row flex flex-col px-32'>
                     <div className="w-[85%] flex flex-col items-center lg:w-full mx-auto my-2 xl:ml-auto xl:mb-5">
-                        <Image src={process.env.NEXT_PUBLIC_LOGO || ""} className='' height={80} width={120} alt="logo" />
-                        <h1 className='text-black text-center mt-2 text-lg'>{process.env.NEXT_PUBLIC_NAME}</h1>
+                        <Image src={logoSrc} className='' height={80} width={120} alt="logo" />
+                        <h1 className='text-black text-center mt-2 text-lg'>{siteName}</h1>
                     </div>
                 </Toolbar>
                 <div className="flex justify-between items-center">
@@ -72,9 +77,14 @@ export default function Layout({ children, cartCount = 0, setShowOrder }: any) {
                 </div>
             </AppBar>
             {children}
-            <div className={clsx(`footer lg:max-h-30 lg:flex xl:flex lg:justify-between xl:justify-between border-t-2 py-10 px-5 border-solid border-${process.env.NEXT_PUBLIC_SECONDARY_COLOR}`)}>
+            <div 
+                style={{
+                    borderColor: process.env.NEXT_PUBLIC_SECONDARY_COLOR
+                }}
+                className={clsx('footer lg:max-h-30 lg:flex xl:flex lg:justify-between xl:justify-between border-t-2 py-10 px-5 border-solid')}
+            >
                 <div className="">
-                    <Image src={process.env.NEXT_PUBLIC_LOGO || ""} className='' height={110} width={160} alt="logo" />
+                    <Image src={logoSrc} className='' height={110} width={160} alt="logo" />
                     <div className="contact-section mt-5 flex w-1/3 lg:w-full xl:w-full justify-between">
                         {process.env.NEXT_PUBLIC_INSTAGRAM && (
                             <a href={process.env.NEXT_PUBLIC_INSTAGRAM}>

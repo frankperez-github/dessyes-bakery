@@ -74,9 +74,21 @@ function Item(props: {
                 </CardContent>
             </CardActionArea>
             <div className="quantity w-8/12 flex m-auto my-5 justify-between">
-                <IconMinus className={clsx(`w-8 h-8 p-2 cursor-pointer bg-${process.env.NEXT_PUBLIC_SECONDARY_COLOR} mt-0.5 rounded-full`)} onClick={()=>setQuant(quant-1)}/>
+                <IconMinus 
+                    style={{
+                        backgroundColor: process.env.NEXT_PUBLIC_SECONDARY_COLOR
+                    }}
+                    className={clsx(`w-8 h-8 p-2 cursor-pointer mt-0.5 rounded-full`)} 
+                    onClick={()=>setQuant(quant-1)}
+                />
                 <input value={quant} onChange={()=>{}} id="quant-info" type="number" className="w-5/12 text-center border-solid border-2 p-1"/>
-                <IconPlus className={clsx(`w-8 h-8 p-2 cursor-pointer bg-${process.env.NEXT_PUBLIC_SECONDARY_COLOR} mt-0.5 rounded-full`)} onClick={()=>setQuant(quant+1)}/>
+                <IconPlus 
+                    style={{
+                        backgroundColor: process.env.NEXT_PUBLIC_SECONDARY_COLOR
+                    }}
+                    className={clsx(`w-8 h-8 p-2 cursor-pointer mt-0.5 rounded-full`)} 
+                    onClick={()=>setQuant(quant+1)}
+                />
             </div>
             <CardActions sx={{justifyContent: "space-evenly"}}>
                 <Button size="large" className="!text-black !font-bold !bg-gray-200 !border-gray-200 hover:!border-gray-400 hover:!bg-gray-400 !border-solid !border-2 !mb-5 w-10/12" onClick={()=>addToOrder(props.item)}>

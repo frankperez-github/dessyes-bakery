@@ -98,3 +98,8 @@
   color: white;
   font-weight: bold;
 }
+
+.hover:hover
+{
+  opacity: 0.8;
+}
