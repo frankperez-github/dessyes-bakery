@@ -12,11 +12,13 @@ export default function Profile()
 {
     
     const user = useAuth()
-    const params = new URLSearchParams(window.location.search);
+    
+    const params = window && new URLSearchParams(window.location.search);
     const category = params.get('category');
     const [userOrders, setUserOrders] = useState<Order[]>()
     
     const handleSignOut = async (e:any) => {
+        if(!window) return
         e.preventDefault()
         try {
             await signOut();
