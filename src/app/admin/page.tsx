@@ -34,6 +34,7 @@ export default function AdminPanel()
     const onSubmitProduct = async (e: any) => {
         e.preventDefault();
         const formData = new FormData(e.target);
+        formData.append("priority", products.length+"")
         await toast.promise(
             fetch(`${(typeof(window) !== undefined) ? window.location.origin : ''}/api/products/${selectedProduct?.id}`, {
                 method: productMethod,
@@ -377,7 +378,7 @@ export default function AdminPanel()
         <div className="">
             <ToastContainer />
             <div className="fixed top-[90%] xl:left-[80%] lg:left-[80%] md:left-[80%] left-[65%]">
-                <a href="/" className="text-3xl border-2 border-black bg-gray-300 !z-40 p-5 rounded-lg">Ir a la vista de usuario</a>
+                <a href="/" className="xl:text-3xl lg:text-2xl md:text-sm text-xs border-2 border-black bg-gray-300 !z-40 p-5 rounded-lg ">Vista de usuario</a>
             </div>
             <div className="w-[92%] my-32 mx-auto p-10">
                 <h1 className="my-4 font-bold text-lg">
