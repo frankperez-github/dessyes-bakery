@@ -24,8 +24,8 @@ function CartNoStripe({transportations, setShowOrder, order, setOrder, MLCPrice,
   
     const [paymentMethod, setPaymentMethod] = useState("")
 
-    const [name, setName] = useState(window.localStorage.getItem("name"))
-    const [phone, setPhone] = useState(window.localStorage.getItem("phone"))
+    const [name, setName] = useState(window.localStorage.getItem("name") || "")
+    const [phone, setPhone] = useState(window.localStorage.getItem("phone") || "")
 
     const [copiedCard, setCopiedCard] = useState(false)
     const [copiedPhone, setCopiedPhone] = useState(false)
@@ -300,11 +300,21 @@ function CartNoStripe({transportations, setShowOrder, order, setOrder, MLCPrice,
                     }
                     <div className="flex justify-between gap-5">
                         <h2 className='font-bold mt-5'>Nombre:</h2>
-                        <input type="text" className="h-6 w-8/12 mt-auto" defaultValue={(window.localStorage.getItem("name") ? window.localStorage.getItem("name")! : "")} onChange={(e)=>setName(e.target.value)}/>
+                        <input 
+                          type="text" 
+                          className="h-6 w-8/12 mt-auto" 
+                          value={name}
+                          onChange={(e) => setName(e.target.value)} 
+                        />
                     </div>
                     <div className="flex justify-between gap-5">
                         <h2 className='font-bold mt-5'>Teléfono:</h2>
-                        <input type="text" className="h-6 w-8/12 mt-auto" defaultValue={(window.localStorage.getItem("phone") ? window.localStorage.getItem("phone")! : "")} onChange={(e)=>setPhone(e.target.value)}/>
+                        <input 
+                          type="text" 
+                          className="h-6 w-8/12 mt-auto" 
+                          value={phone}
+                          onChange={(e) => setPhone(e.target.value)} 
+                          />
                     </div>
                 </form>
               </div>
