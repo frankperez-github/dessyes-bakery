@@ -31,7 +31,7 @@ function CartNoStripe({transportations, setShowOrder, order, setOrder, MLCPrice,
     const [copiedPhone, setCopiedPhone] = useState(false)
 
     const [deliveryAddress, setDeliveryAddress] = useState(window.localStorage.getItem("deliveryAddress"))
-    const [selectedTransportation, setSelectedTransportation] = useState<{city:string, transportation_price:number}>(JSON.parse(window.localStorage.getItem("selectedTransportation")!))
+    const [selectedTransportation, setSelectedTransportation] = useState<{city:string, transportation_price:number}>(window.localStorage.getItem("selectedTransportation") ? JSON.parse(window.localStorage.getItem("selectedTransportation")!) : {city: "", transportation_price: 0})
     const [isLoading, setIsLoading] = useState(false)
 
 
@@ -295,16 +295,16 @@ function CartNoStripe({transportations, setShowOrder, order, setOrder, MLCPrice,
                         selectedTransportation?.city !== "" &&
                         <div className="flex justify-between gap-5 ">
                             <h2 className='font-bold mt-5 pb-2'>Dirección:</h2>
-                            <textarea onChange={(e)=>setDeliveryAddress(e.target.value)} value={(window.localStorage.getItem("deliveryAddress") ? window.localStorage.getItem("deliveryAddress"): '')!} className='w-8/12 h-10 mt-auto'/>
+                            <textarea onChange={(e)=>setDeliveryAddress(e.target.value)} defaultValue={(window.localStorage.getItem("deliveryAddress") ? window.localStorage.getItem("deliveryAddress")! : "")} className='w-8/12 h-10 mt-auto'/>
                         </div>
                     }
                     <div className="flex justify-between gap-5">
                         <h2 className='font-bold mt-5'>Nombre:</h2>
-                        <input type="text" className="h-6 w-8/12 mt-auto" defaultValue={window.localStorage.getItem("name") || ""} onChange={(e)=>setName(e.target.value)}/>
+                        <input type="text" className="h-6 w-8/12 mt-auto" defaultValue={(window.localStorage.getItem("name") ? window.localStorage.getItem("name")! : "")} onChange={(e)=>setName(e.target.value)}/>
                     </div>
                     <div className="flex justify-between gap-5">
                         <h2 className='font-bold mt-5'>Teléfono:</h2>
-                        <input type="text" className="h-6 w-8/12 mt-auto" defaultValue={window.localStorage.getItem("phone") || ''} onChange={(e)=>setPhone(e.target.value)}/>
+                        <input type="text" className="h-6 w-8/12 mt-auto" defaultValue={(window.localStorage.getItem("phone") ? window.localStorage.getItem("phone")! : "")} onChange={(e)=>setPhone(e.target.value)}/>
                     </div>
                 </form>
               </div>
