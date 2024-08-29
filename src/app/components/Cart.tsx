@@ -69,7 +69,7 @@ function CartNoStripe({transportations, setShowOrder, order, setOrder, MLCPrice,
         newMessage+=`%0a Método de Pago: ${paymentMethod}`
         newMessage+=`%0a Nombre: ${name}`
         newMessage+=`%0a Teléfono: ${phone}`
-        newMessage+=`%0a Dirección de entrega: ${deliveryAddress}, ${selectedTransportation.city}`
+        newMessage+=`%0a Dirección de entrega: ${deliveryAddress}, ${selectedTransportation?.city}`
 
         setMessage(newMessage)
         
@@ -110,7 +110,7 @@ function CartNoStripe({transportations, setShowOrder, order, setOrder, MLCPrice,
               paymentStatus: paymentStatus === "success" ? "Completado" : "Pendiente",
               userId: user?.id,
               total: `${order.total + " CUP" + (MLCPrice ? " / " + (order.total / MLCPrice).toFixed(2) + " MLC" : '') + (USDPrice ? " / " + (order.total / USDPrice).toFixed(2) + " USD" : "")}`,
-              deliveryAddress: deliveryAddress + ", " + selectedTransportation.city,
+              deliveryAddress: deliveryAddress + ", " + selectedTransportation?.city,
               orderStatus: "Procesando",
               created_at: new Date().toISOString().replace('T', ' ').replace('Z', '+00').replace(/\.\d+/, (ms) => `.${ms.slice(1, 4)}000`),
               paymentMethod: paymentMethod === "TarjetaInternacional" ?
@@ -282,7 +282,7 @@ function CartNoStripe({transportations, setShowOrder, order, setOrder, MLCPrice,
                     <h2 className='font-bold text-2xl mt-14 mb-5'>Contacto de entrega:</h2>
                     <div className="flex justify-between gap-5">
                         <h2 className='font-bold mt-5'>Municipio:</h2>
-                        <select name="" value={JSON.parse(window.localStorage.getItem("selectedTransportation")!).city} id="" className="mt-5" onChange={(e)=>setSelectedTransportation(transportations.filter((t:any)=>t.city === e.target.value)[0])}>
+                        <select name="" value={JSON.parse(window.localStorage.getItem("selectedTransportation")!)?.city} id="" className="mt-5" onChange={(e)=>setSelectedTransportation(transportations.filter((t:any)=>t?.city === e.target.value)[0])}>
                             <option value=""  className='font-bold'  id="defaultCity">Seleccione</option>
                             {
                                 transportations.map((transp:any)=>(
