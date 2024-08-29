@@ -14,6 +14,16 @@ import useIsClient from './hooks/useIsClient';
 
 export default function Home() {
   const isClient = useIsClient(); 
+  const params = new URLSearchParams(isClient ? window.location.search : null!);
+  const paymentStatus = params.get('paymentStatus');
+
+  useEffect(()=>{
+    if(paymentStatus)
+    {
+      setShowOrder(true)
+    }
+  },[paymentStatus])
+
   const [showOrder, setShowOrder] = useState(false);
   const [order, setOrder] = useState<{"products": any[], "total": number}>({
     "products": [],
@@ -111,6 +121,7 @@ export default function Home() {
                 setOrder={setOrder}
                 MLCPrice={MLCPrice}
                 USDPrice={USDPrice}
+                paymentStatus={paymentStatus}
               />
             </div>
           }

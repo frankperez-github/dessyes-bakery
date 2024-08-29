@@ -1,26 +1,59 @@
 import { IconTrash } from "@tabler/icons-react"
 import { useEffect, useState } from "react"
 import { Button, CircularProgress } from "@mui/material"
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements } from '@stripe/react-stripe-js';
+import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import useAuth from "../hooks/useAuth"
 import clsx from "clsx"
 
-export default function Cart({transportations, setShowOrder, order, setOrder, MLCPrice, USDPrice}:any)
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
+
+export default function Cart(props:any) {
+  return (
+    <Elements stripe={stripePromise}>
+      <CartNoStripe {...props} />
+    </Elements>
+  );
+}
+
+function CartNoStripe({transportations, setShowOrder, order, setOrder, MLCPrice, USDPrice, paymentStatus}:any)
 {
+
     const [message, setMessage]= useState("")
   
     const [paymentMethod, setPaymentMethod] = useState("")
-    const [paymentStatus, setPaymentStatus] = useState("Pendiente")
 
-    const [name, setName] = useState("")
-    const [phone, setPhone] = useState("")
+    const [name, setName] = useState(window.localStorage.getItem("name"))
+    const [phone, setPhone] = useState(window.localStorage.getItem("phone"))
 
     const [copiedCard, setCopiedCard] = useState(false)
     const [copiedPhone, setCopiedPhone] = useState(false)
 
-    const [deliveryAddress, setDeliveryAddress] = useState("")
-    const [selectedTransportation, setSelectedTransportation] = useState<{city:string, transportation_price:number}>({city:"", transportation_price:0})
-    
+    const [deliveryAddress, setDeliveryAddress] = useState(window.localStorage.getItem("deliveryAddress"))
+    const [selectedTransportation, setSelectedTransportation] = useState<{city:string, transportation_price:number}>(JSON.parse(window.localStorage.getItem("selectedTransportation")!))
     const [isLoading, setIsLoading] = useState(false)
+
+
+    useEffect(()=>{
+      window.localStorage.setItem("name", name!)
+    },[name])
+
+    useEffect(()=>{
+      window.localStorage.setItem("phone", phone!)
+    },[phone])
+
+    useEffect(()=>{
+      window.localStorage.setItem("deliveryAddress", deliveryAddress!)
+    },[deliveryAddress])
+    
+    useEffect(()=>{
+      window.localStorage.setItem("selectedTransportation", JSON.stringify(selectedTransportation))
+    },[selectedTransportation])
+    
+    useEffect(()=>{
+      window.localStorage.setItem("paymentMethod", paymentMethod)
+    },[paymentMethod])
 
     useEffect(()=>{
         let newMessage = "Detalles de la orden:"
@@ -62,12 +95,11 @@ export default function Cart({transportations, setShowOrder, order, setOrder, ML
     const { user } = useAuth()
 
     const handleSubmit = async () =>{
-        if(!window) return
         if(selectedTransportation?.city !== "" && deliveryAddress !== "" && name !== "" && phone !== "") 
         {
-            if(paymentStatus !== "Completado" && paymentMethod === "TarjetaInternacional")
+            if(paymentStatus && paymentStatus !== "success")
             {
-              alert("Realice el pago o escoja otro método de pago.")
+              alert("No se ha realizado el pago, puede escoger otro método de pago.")
               return
             }
 
@@ -75,7 +107,7 @@ export default function Cart({transportations, setShowOrder, order, setOrder, ML
             
 
             const newOrder:Order = {
-              paymentStatus,
+              paymentStatus: paymentStatus === "success" ? "Completado" : "Pendiente",
               userId: user?.id,
               total: `${order.total + " CUP" + (MLCPrice ? " / " + (order.total / MLCPrice).toFixed(2) + " MLC" : '') + (USDPrice ? " / " + (order.total / USDPrice).toFixed(2) + " USD" : "")}`,
               deliveryAddress: deliveryAddress + ", " + selectedTransportation.city,
@@ -88,8 +120,8 @@ export default function Cart({transportations, setShowOrder, order, setOrder, ML
                   paymentMethod === "TarjetaMLC" ?
                     "MLC Transfer" :
                     "Cash",
-              contactName: name,
-              contactPhone: phone,
+              contactName: name!,
+              contactPhone: phone!,
             }
 
             
@@ -117,10 +149,7 @@ export default function Cart({transportations, setShowOrder, order, setOrder, ML
 
             if(responseOrder.ok && responseProds.ok)
             {
-              if(typeof(window) !== undefined)
-              {
-                window.location.replace(`https://wa.me/+5353103058?text=${message}`)
-              }
+              window.location.replace(`https://wa.me/+5353103058?text=${message}`)
               setOrder({"products": [], "total": 0})
               setIsLoading(false)
             }
@@ -137,8 +166,51 @@ export default function Cart({transportations, setShowOrder, order, setOrder, ML
         }
     }
 
+    const stripe = useStripe();
+
+    const handleStripePayment = async (event:any) => {
+      event.preventDefault()
+      if(selectedTransportation?.city !== "" && deliveryAddress !== "" && name !== "" && phone !== "") 
+      {
+        const items = [...order.products.map((prod:any)=>{
+          return{
+            name: prod.name,
+            price: (prod.unitPrice / USDPrice).toFixed(2),
+            quantity: prod.quantity,
+          }
+        }), {
+          name: "Delivery",
+          price: (selectedTransportation.transportation_price / USDPrice).toFixed(2),
+          quantity: 1
+        }]
+
+        // Fetch the payment intent client secret from your API
+        const res = await fetch('/api/create-payment-intent', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ items }),
+        });
+
+        const { id } = await res.json();
+
+        const { error } = await stripe!.redirectToCheckout({
+          sessionId: id,
+        });
+
+        if (error) {
+          console.error('Error redirecting to Stripe Checkout:', error.message);
+        }
+      }
+      else
+      {
+          alert("Por favor, complete la información de entrega.")
+          return
+      }
+    };
+
     return(
         <div className="">
+            <CardElement />
             <div className="bg-[#ffffffe3] fixed w-full h-full z-10 top-0"></div>
             <div className="OrderList flex flex-col justify-between absolute top-[10%] w-[80%] mx-[10%] z-10 bg-[#f0f0f0] p-[5%] rounded-xl">
               <div className="">
@@ -181,7 +253,7 @@ export default function Cart({transportations, setShowOrder, order, setOrder, ML
                     <tr >
                         <td className='text-left'>Envío:</td>
                         <td></td>
-                        <td className='font-bold text-right'>{selectedTransportation?.transportation_price} CUP</td>
+                        <td className='font-bold text-right' >{JSON.parse(window.localStorage.getItem("selectedTransportation")!).transportation_price ? JSON.parse(window.localStorage.getItem("selectedTransportation")!).transportation_price : selectedTransportation?.transportation_price} CUP</td>
                     </tr>
                     <tr className='border-[#c6c6c6] border-t-2'>
                         <td className='text-left'>Total CUP:</td>
@@ -210,8 +282,8 @@ export default function Cart({transportations, setShowOrder, order, setOrder, ML
                     <h2 className='font-bold text-2xl mt-14 mb-5'>Contacto de entrega:</h2>
                     <div className="flex justify-between gap-5">
                         <h2 className='font-bold mt-5'>Municipio:</h2>
-                        <select name="" id="" className="mt-5" onChange={(e)=>setSelectedTransportation(transportations.filter((t:any)=>t.city === e.target.value)[0])}>
-                            <option value="" className='font-bold'  id="defaultCity">Seleccione</option>
+                        <select name="" value={JSON.parse(window.localStorage.getItem("selectedTransportation")!).city} id="" className="mt-5" onChange={(e)=>setSelectedTransportation(transportations.filter((t:any)=>t.city === e.target.value)[0])}>
+                            <option value=""  className='font-bold'  id="defaultCity">Seleccione</option>
                             {
                                 transportations.map((transp:any)=>(
                                     <option key={transp.city} value={transp.city}>{transp.city}</option>
@@ -223,16 +295,16 @@ export default function Cart({transportations, setShowOrder, order, setOrder, ML
                         selectedTransportation?.city !== "" &&
                         <div className="flex justify-between gap-5 ">
                             <h2 className='font-bold mt-5 pb-2'>Dirección:</h2>
-                            <textarea onChange={(e)=>setDeliveryAddress(e.target.value)} className='w-8/12 h-10 mt-auto'/>
+                            <textarea onChange={(e)=>setDeliveryAddress(e.target.value)} defaultValue={(window.localStorage.getItem("deliveryAddress") ? window.localStorage.getItem("deliveryAddress"): '')!} className='w-8/12 h-10 mt-auto'/>
                         </div>
                     }
                     <div className="flex justify-between gap-5">
                         <h2 className='font-bold mt-5'>Nombre:</h2>
-                        <input type="text" className="h-6 w-8/12 mt-auto" onChange={(e)=>setName(e.target.value)}/>
+                        <input type="text" className="h-6 w-8/12 mt-auto" defaultValue={(window.localStorage.getItem("name") ? window.localStorage.getItem("name"): '')!} onChange={(e)=>setName(e.target.value)}/>
                     </div>
                     <div className="flex justify-between gap-5">
                         <h2 className='font-bold mt-5'>Teléfono:</h2>
-                        <input type="text" className="h-6 w-8/12 mt-auto" onChange={(e)=>setPhone(e.target.value)}/>
+                        <input type="text" className="h-6 w-8/12 mt-auto" defaultValue={(window.localStorage.getItem("phone") ? window.localStorage.getItem("phone"): '')!} onChange={(e)=>setPhone(e.target.value)}/>
                     </div>
                 </form>
               </div>
@@ -280,7 +352,7 @@ export default function Cart({transportations, setShowOrder, order, setOrder, ML
                     }
                   </div>
                   <div className="lg:w-full xl:w-full lg:mt-5 xl:mt-5">
-                    <button className="payment-option" onClick={()=>setPaymentMethod("TarjetaInternacional")}>Visa o Mastercard</button>
+                    <button className="payment-option" onClick={(e:any)=>{setPaymentMethod("TarjetaInternacional"), handleStripePayment(e)}}>Visa o Mastercard</button>
                   </div>
                   <div className="lg:w-full xl:w-full lg:mt-5 xl:mt-5">
                     <button className="payment-option" onClick={()=>setPaymentMethod("Efectivo")}>Efectivo</button>
