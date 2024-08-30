@@ -106,10 +106,11 @@ function CartNoStripe({transportations, setShowOrder, order, setOrder, MLCPrice,
             setIsLoading(true)
             
 
+            const total = order.total+selectedTransportation.transportation_price
             const newOrder:Order = {
               paymentStatus: paymentStatus === "success" ? "Completado" : "Pendiente",
               userId: user?.id,
-              total: `${order.total + " CUP" + (MLCPrice ? " / " + (order.total / MLCPrice).toFixed(2) + " MLC" : '') + (USDPrice ? " / " + (order.total / USDPrice).toFixed(2) + " USD" : "")}`,
+              total: `${total + " CUP" + (MLCPrice ? " / " + (total / MLCPrice).toFixed(2) + " MLC" : '') + (USDPrice ? " / " + (total / USDPrice).toFixed(2) + " USD" : "")}`,
               deliveryAddress: deliveryAddress + ", " + selectedTransportation?.city,
               orderStatus: "Procesando",
               created_at: new Date().toISOString().replace('T', ' ').replace('Z', '+00').replace(/\.\d+/, (ms) => `.${ms.slice(1, 4)}000`),

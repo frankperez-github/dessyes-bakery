@@ -11,7 +11,7 @@ export default function OrderCard({ order }: { order: Order }) {
     };
 
     const [showDetails, setShowDetails] = useState(false);
-    const [orderProducts, setOrderProducts] = useState([]);
+    const [orderProducts, setOrderProducts] = useState<any[]>([]);
 
     const fetchOrderProducts = async () => {
         const response = await fetch('/api/orderProducts/' + order.id, {
@@ -24,8 +24,15 @@ export default function OrderCard({ order }: { order: Order }) {
         fetchOrderProducts();
     }, []);
 
+    useEffect(()=>{
+        if(orderProducts?.length > 0)
+        {
+            console.log(order.total.replaceAll("/", " ").split(" "))
+        }
+    },[orderProducts])
+
     return (
-        <div className={clsx("w-10/12 mx-auto border-2 flex flex-col gap-4 rounded-md p-6 my-10", `border-${statusColors[order.orderStatus]}`)}>
+        <div style={{borderColor: statusColors[order.orderStatus]}} className={clsx("w-10/12 mx-auto border-2 flex flex-col gap-4 rounded-md p-6 my-10")}>
             <div className="flex">
                 <IconCalendarEvent className="mr-2" />
                 <p className="font-bold">
@@ -59,9 +66,9 @@ export default function OrderCard({ order }: { order: Order }) {
                 </p>
             </div>
             <p className="font-bold">
-                <div className="flex">
+                <div className="flex" style={{color: statusColors[order.orderStatus]}}>
                     <IconReceipt className="mr-2" />
-                    Estado de la orden: <span className={clsx(`ml-2 font-bold`, `text-${statusColors[order.orderStatus]}`)}>{order.orderStatus}</span>
+                    Estado de la orden: <span className={clsx(`ml-2 font-bold`)}>{order.orderStatus}</span>
                 </div>
             </p>
             {
@@ -77,7 +84,7 @@ export default function OrderCard({ order }: { order: Order }) {
                         </thead>
                         <tbody className="text-center">
                             {
-                                orderProducts.map((prod: any, key) => (
+                                orderProducts?.map((prod: any, key) => (
                                     <tr className="border-2" key={key}>
                                         <td className="border-x-2">{prod.productName}</td>
                                         <td className="border-x-2">{prod.quantity}</td>
@@ -85,6 +92,23 @@ export default function OrderCard({ order }: { order: Order }) {
                                     </tr>
                                 ))
                             }
+                                <tr className="border-2">
+                                    <td className="border-x-2">Envío</td>
+                                    <td className="border-x-2">1</td>
+                                    <td className="border-x-2">
+                                        {(parseFloat(order.total.replaceAll("/", " ").split(" ")[0]) - orderProducts.reduce((acc, product:any) => 
+                                            acc + (+product.unitPrice.replace(/<br>/g, " ").replace(/\n/g, " ").split(" ")[0]) * (product.quantity), 0
+                                        )).toFixed(2)} CUP
+                                        <br/>
+                                        {(parseFloat(order.total.replaceAll("/", " ").split(" ")[4]) - orderProducts.reduce((acc, product:any) => 
+                                            acc + (+product.unitPrice.replace(/<br>/g, " ").replace(/\n/g, " ").split(" ")[2]) * (product.quantity), 0
+                                        )).toFixed(2)} MLC
+                                        <br/>
+                                        {(parseFloat(order.total.replaceAll("/", " ").split(" ")[8]) - orderProducts.reduce((acc, product:any) => 
+                                            acc + (+product.unitPrice.replace(/<br>/g, " ").replace(/\n/g, " ").split(" ")[4]) * (product.quantity), 0
+                                        )).toFixed(2)} USD
+                                    </td>
+                                </tr>
                         </tbody>
                     </table>
                 </div>
