@@ -14,7 +14,7 @@ export default function Layout({ children, cartCount = 0, setShowOrder }: any) {
 
     const secondaryColorBorder = "border-"+process.env.NEXT_PUBLIC_SECONDARY_COLOR || 'border-black';
     const logoSrc = process.env.NEXT_PUBLIC_LOGO || '';
-    const siteName = process.env.NEXT_PUBLIC_NAME || 'Nombre Negocio';
+    const siteName = process.env.NEXT_PUBLIC_NAME || '';
 
     function sleep(time: any) {
         return new Promise((resolve) => setTimeout(resolve, time));
