@@ -371,10 +371,6 @@ function CartNoStripe({transportations, setShowOrder, order, setOrder, MLCPrice,
                   </div>
                   <div className="lg:w-full xl:w-full lg:mt-5 xl:mt-5">
                     <button className="payment-option" onClick={()=>setPaymentMethod("Efectivo")}>Efectivo</button>
-                    {
-                      paymentMethod === "Efectivo" &&
-                      <h2 className='text-red-500 font-bold my-5 lg:ml-8 xl:ml-8'>Este método de pago solo es permitido si no es su primera compra.</h2>
-                    }
                   </div>
                 </div>
               </div>
