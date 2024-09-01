@@ -212,8 +212,8 @@ function CartNoStripe({transportations, setShowOrder, order, setOrder, MLCPrice,
     return(
         <div className="">
             <CardElement />
-            <div className="bg-[#ffffffe3] fixed w-full h-full z-10 top-0"></div>
-            <div className="OrderList flex flex-col justify-between absolute top-[10%] w-[80%] mx-[10%] z-10 bg-[#f0f0f0] p-[5%] rounded-xl">
+            <div className="bg-[#ffffffe3] fixed w-full h-full z-10 top-0 "></div>
+            <div className="OrderList flex flex-col justify-between max-h-full overflow-y-auto fixed top-0 w-[80%] mx-[10%] py-20 z-10 bg-[#f0f0f0] p-[5%] rounded-xl">
               <div className="">
                 <h2 className='font-bold text-2xl mb-5'>Compruebe su orden:</h2>
                 <table id='orderTable' className='w-full px-2 text-left'>
