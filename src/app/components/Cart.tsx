@@ -375,6 +375,9 @@ function CartNoStripe({transportations, setShowOrder, order, setOrder, MLCPrice,
                 </div>
               </div>
               
+              <br />
+              <h2>Recomendamos que cree su cuenta en nuestro sitio, de esa forma podrá obtener los DESCUENTOS que hacemos a nuestros clientes</h2>
+ 
               <div className="flex justify-between w-full mt-16">
                 <Button 
                   size="large" 

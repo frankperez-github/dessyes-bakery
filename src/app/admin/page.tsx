@@ -34,12 +34,13 @@ export default function AdminPanel()
     const onSubmitProduct = async (e: any) => {
         e.preventDefault();
         const formData = new FormData(e.target);
-        formData.append("priority", products.length+"")
+        formData.append("priority", 0+"")
         await toast.promise(
             fetch(`${(typeof(window) !== undefined) ? window.location.origin : ''}/api/products/${selectedProduct?.id}`, {
                 method: productMethod,
                 body: formData
             }).then(response => {
+                e.target.reset()
                 return response.json();
             }), {
                 pending: `${productMethod === "POST" ? "Creating" : productMethod === "PUT" ? "Updating" : "Deleting"} Product`,
@@ -47,10 +48,6 @@ export default function AdminPanel()
                 error: `There was an error 🤯`
             }
         );
-        if(typeof(window) !== undefined)
-        {
-            window.location.reload()
-        }
     }
 
     const [transportations, setTransportations] = useState([]);
@@ -96,6 +93,7 @@ export default function AdminPanel()
                 },
                 body: JSON.stringify(transportation)
             }).then(response => {
+                form.reset()
                 return response.json();
             }), {
                 pending: `${transportationMethod === "POST" ? "Creating" : transportationMethod === "PUT" ? "Updating" : "Deleting"} Transportation`,
@@ -103,10 +101,6 @@ export default function AdminPanel()
                 error: `There was an error 🤯`
             }
         );
-        if(typeof(window) !== undefined)
-        {
-            window.location.reload()
-        }
     }
 
     const handlePriorityChange = (e:any, id:any) => {
@@ -237,10 +231,7 @@ export default function AdminPanel()
         if(response.ok)
         {
             toast.success("Orden Actualizada")
-            if(typeof(window) !== undefined)
-            {
-                window.location.reload()
-            }
+            e.target.reset()
         }
         else
         {
@@ -259,10 +250,7 @@ export default function AdminPanel()
         if(response.ok)
         {
             toast.success("Orden Actualizada")
-            if(typeof(window) !== undefined)
-            {
-                window.location.reload()
-            }
+            e.target.reset()
         }
         else
         {

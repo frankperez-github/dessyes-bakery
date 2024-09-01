@@ -68,6 +68,26 @@ export async function POST(req: NextRequest) {
     // Add the image URL to the form data object
     formDataObject.image = imageUrl;
 
+    const { data: productsList, error: errorGet } = await supabase
+      .from('Products')
+      .select('*');
+    
+      if (productsList) {
+        for (let i = 0; i < productsList?.length!; i++) {
+          console.log(productsList[i].priority)
+          productsList[i].priority = parseInt(productsList[i].priority)+1
+          const { data: product, error } = await supabase
+            .from('Products')
+            .update(productsList[i])
+            .eq('id', productsList[i].id)
+            .single()
+          if(error)
+          {
+            console.error("Error trying to update priorities: "+error.message)
+          }
+        }
+      }
+
     // Insert product into the PostgreSQL database
     const { data: product, error } = await supabase
       .from('Products')
