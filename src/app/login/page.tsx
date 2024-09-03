@@ -4,7 +4,8 @@ import { signInWithEmail, signInWithProvider } from '../../supabase/supabaseAuth
 import { useState } from "react";
 import { IconButton, InputAdornment, TextField } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 import clsx from "clsx";
 
 export default function Register()
@@ -21,9 +22,11 @@ export default function Register()
             await signInWithEmail(email, password);
             if(typeof(window) !== undefined)
             {
+                toast.success("Sesión iniciada")
                 window.location.replace("/")
             } 
         } catch (error:any) {
+            toast.error("Ha habido un error, vuelva a intentar.")
             console.error('Error signing in: '+error.message);
         }
     };
@@ -39,6 +42,8 @@ export default function Register()
 
     return(
         <Layout>
+            <ToastContainer />
+
             <form onSubmit={handleSignIn} className="flex flex-col mb-24 mt-20">
                 <TextField 
                     sx={{width: '80%', margin: '5% auto'}}  

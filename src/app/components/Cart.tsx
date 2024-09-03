@@ -254,7 +254,7 @@ function CartNoStripe({transportations, setShowOrder, order, setOrder, MLCPrice,
                     <tr >
                         <td className='text-left'>Envío:</td>
                         <td></td>
-                        <td className='font-bold text-right' >{JSON.parse(window.localStorage.getItem("selectedTransportation")!) ? JSON.parse(window.localStorage.getItem("selectedTransportation")!).transportation_price : selectedTransportation?.transportation_price} CUP</td>
+                        <td className='font-bold text-right' >{selectedTransportation?.transportation_price} CUP</td>
                     </tr>
                     <tr className='border-[#c6c6c6] border-t-2'>
                         <td className='text-left'>Total CUP:</td>

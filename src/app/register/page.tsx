@@ -4,7 +4,8 @@ import { signUpWithEmail } from '../../supabase/supabaseAuth';
 import { useState } from "react";
 import { IconButton, InputAdornment, TextField } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 import clsx from "clsx";
 
 export default function Register()
@@ -28,6 +29,7 @@ export default function Register()
     };
     return(
         <Layout>
+            <ToastContainer />
             <form onSubmit={handleSignUp} className="flex flex-col mb-24 mt-20">
                 <TextField 
                     sx={{width: '80%', margin: '5% auto'}}  

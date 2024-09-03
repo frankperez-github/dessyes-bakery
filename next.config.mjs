@@ -1,4 +1,9 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {};
-
-export default nextConfig;
+const nextConfig = {
+    images: {
+      domains: [process.env.NEXT_PUBLIC_IMG_DOMAIN | ""],
+    },
+  };
+  
+  export default nextConfig;
+  
