@@ -23,6 +23,7 @@ export default function Register()
         try {
             await signUpWithEmail(email, password, displayName, phone);
             toast.success('Usuario registrado');
+            window.location.replace("/")
         } catch (error:any) {
             toast.error('Ha habido un error');
         }
