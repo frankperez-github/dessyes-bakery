@@ -44,7 +44,7 @@ export default function Register()
         <Layout>
             <ToastContainer />
 
-            <form onSubmit={handleSignIn} className="flex flex-col mb-24 mt-20">
+            <form onSubmit={handleSignIn} className="flex flex-col mb-24 mt-20 lg:px-[30%] xl:px-[30%]">
                 <TextField 
                     sx={{width: '80%', margin: '5% auto'}}  
                     variant="outlined" 

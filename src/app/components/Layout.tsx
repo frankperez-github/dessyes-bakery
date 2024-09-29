@@ -12,7 +12,6 @@ export default function Layout({ children, cartCount = 0, setShowOrder }: any) {
     const { user } = useAuth();
     const isClient = useIsClient();
 
-    const secondaryColorBorder = "border-"+process.env.NEXT_PUBLIC_SECONDARY_COLOR || 'border-black';
     const logoSrc = process.env.NEXT_PUBLIC_LOGO || '';
     const siteName = process.env.NEXT_PUBLIC_NAME || '';
 
@@ -45,19 +44,16 @@ export default function Layout({ children, cartCount = 0, setShowOrder }: any) {
     return (
         <div className="">
             <AppBar position="sticky" style={{backgroundColor: process.env.NEXT_PUBLIC_PRIMARY_COLOR}} className='!z-10'>
-                <Toolbar sx={{ backgroundColor: "#fff" }} className='lg:flex-row flex flex-col px-32'>
-                    <div className="w-[85%] flex flex-col items-center lg:w-full mx-auto my-2 xl:ml-auto xl:mb-5">
-                        <Image src={logoSrc} className='' height={80} width={120} alt="logo" />
-                        <h1 className='text-black text-center mt-2 text-lg'>{siteName}</h1>
-                    </div>
-                </Toolbar>
                 <div className="flex justify-between items-center">
-                    {isClient && window.location.pathname !== "/" && (
-                        <div className="ml-3 w-[15%] lg:w-[5%] xl:w-[5%] cursor-pointer">
+                    <div className='flex justify-start'>
+                        <div style={{opacity: isClient && window.location.pathname !== "/" ? "1" : "0"}} className="ml-3 mt-14 w-[15%] lg:w-[5%] xl:w-[5%] lg:my-auto lg:mx-10 xl:my-auto xl:mx-10 cursor-pointer">
                             <IconArrowLeft size={"70%"} onClick={() => window.location.replace('/')} />
                         </div>
-                    )}
-                    <div className="w-28 flex justify-between py-4 cursor-pointer ml-auto mr-10">
+                        <div className="xl:w-[10%] w-[30%] flex flex-col items-center lg:w-full lg:ml-[3%] xl:ml-[3%] my-3 ml-[32%] xl:mb-5" onClick={()=>window.location.replace("/")}>
+                            <Image src={logoSrc} className='image' fill alt="logo" />
+                        </div>
+                    </div>
+                    <div className="w-[45%] lg:w-[5%] xl:mr-[5%] mt-10 lg:mt-0 xl:mt-0 flex justify-between py-4 cursor-pointer mr-5">
                         {user && user.displayName ? (
                             <h1 className='w-[42%] h-12 pl-1.5 pt-1 border-2 rounded-full text-3xl' onClick={handleProfileRedirect}>
                                 {user.displayName.split(' ').length > 1 ? user.displayName.split(' ')[0][0] + "" + user.displayName.split(' ')[1][0] : user.displayName.split(' ')[0][0]}
@@ -81,7 +77,7 @@ export default function Layout({ children, cartCount = 0, setShowOrder }: any) {
                 style={{
                     borderColor: process.env.NEXT_PUBLIC_SECONDARY_COLOR
                 }}
-                className={clsx('footer lg:max-h-30 lg:flex xl:flex lg:justify-between xl:justify-between border-t-2 py-10 px-5 border-solid')}
+                className='footer lg:max-h-30 lg:flex xl:flex lg:justify-between xl:justify-between border-t-2 py-10 px-5 border-solid mt-32'
             >
                 <div className="">
                     <Image src={logoSrc} className='' height={110} width={160} alt="logo" />

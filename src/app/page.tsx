@@ -98,10 +98,10 @@ export default function Home() {
       {
         !isLoading ?
         <main className="bg-[#fff]">
-          <div className="lg:flex xl:flex flex-wrap block">
+          <div className="lg:flex xl:flex flex-wrap block lg:mx-10 xl:mx-10">
             {
               products?.map((item, index) => (
-                <SwiperSlide className='lg:!w-1/4 xl:!w-1/4 w-full pl-10' key={index}>
+                <SwiperSlide className='lg:!w-[20%] xl:!w-[20%] w-full' key={index}>
                   {
                     products?.filter(x => x.priority === index)[0] &&
                     <Item MLCPrice={MLCPrice!} USDPrice={USDPrice!} item={products?.filter(x => x.priority === index)[0]} quant={1} order={order} setOrder={setOrder} />

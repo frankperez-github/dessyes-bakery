@@ -31,7 +31,7 @@ export default function Register()
     return(
         <Layout>
             <ToastContainer />
-            <form onSubmit={handleSignUp} className="flex flex-col mb-24 mt-20">
+            <form onSubmit={handleSignUp} className="flex flex-col mb-24 mt-20 lg:px-[30%] xl:px-[30%]">
                 <TextField 
                     sx={{width: '80%', margin: '5% auto'}}  
                     variant="outlined" 

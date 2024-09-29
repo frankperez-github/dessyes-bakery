@@ -88,9 +88,9 @@ function CartNoStripe({transportations, setShowOrder, order, setOrder, MLCPrice,
     }
 
 
-    const confirmationPhone = "53103058"
-    const CUPCard = "9227 9598 7524 2567"
-    const MLCCard = "9235 9598 7053 2996"
+    const confirmationPhone = process.env.NEXT_PUBLIC_CONFIRMATION_PHONE
+    const CUPCard = process.env.NEXT_PUBLIC_CUP_CARD
+    const MLCCard = process.env.NEXT_PUBLIC_MLC_CARD
 
     const { user } = useAuth()
 
@@ -213,7 +213,7 @@ function CartNoStripe({transportations, setShowOrder, order, setOrder, MLCPrice,
         <div className="">
             <CardElement />
             <div className="bg-[#ffffffe3] fixed w-full h-full z-10 top-0 "></div>
-            <div className="OrderList flex flex-col justify-between max-h-full overflow-y-auto fixed top-0 w-[80%] mx-[10%] py-20 z-10 bg-[#f0f0f0] p-[5%] rounded-xl">
+            <div className="flex flex-col justify-between max-h-full overflow-y-auto fixed top-0 w-[80%] mx-[10%] lg:px-[25%] py-20 z-10 bg-[#f0f0f0] p-[5%] rounded-xl">
               <div className="">
                 <h2 className='font-bold text-2xl mb-5'>Compruebe su orden:</h2>
                 <table id='orderTable' className='w-full px-2 text-left'>
@@ -327,50 +327,50 @@ function CartNoStripe({transportations, setShowOrder, order, setOrder, MLCPrice,
 
               <div className="">
                 <h2 className='font-bold'>Seleccione el metodo de pago:</h2>
-                <div className="lg:flex xl:flex  w-full ">
+                <div className="lg:flex xl:grid grid-cols-2 w-full">
                   <div className="lg:w-full xl:w-full lg:mt-5 xl:mt-5">
-                    <button className="payment-option" onClick={()=>setPaymentMethod("TarjetaCUP")}>Tarjeta CUP</button>
+                    <button style={{border: paymentMethod === "TarjetaCUP" ? "solid 3px green" : ''}} className="payment-option" onClick={()=>setPaymentMethod("TarjetaCUP")}>Tarjeta CUP</button>
                     {
                       paymentMethod === "TarjetaCUP" &&
                         <div className="my-10 lg:ml-10 xl:ml-10">
                           <h2>Tarjeta:</h2>
                           <div className="flex justify-evenly">
                             <h2>{CUPCard}</h2>
-                            <button onClick={()=>{navigator.clipboard.writeText(CUPCard); setCopiedCard(true); setCopiedPhone(false)}}>{copiedCard ? "✅" : "copiar"}</button>
+                            <button onClick={()=>{navigator.clipboard.writeText(CUPCard!); setCopiedCard(true); setCopiedPhone(false)}}>{copiedCard ? "✅" : "copiar"}</button>
                           </div>
 
                           <h2>Teléfono:</h2>
                           <div className="flex justify-evenly">
                             <h2>{confirmationPhone}</h2>
-                            <button onClick={()=>{navigator.clipboard.writeText(confirmationPhone); setCopiedCard(false); setCopiedPhone(true)}}>{copiedPhone ? "✅" : "copiar"}</button>
+                            <button onClick={()=>{navigator.clipboard.writeText(confirmationPhone!); setCopiedCard(false); setCopiedPhone(true)}}>{copiedPhone ? "✅" : "copiar"}</button>
                           </div>
                         </div>
                     }
                   </div>
                   <div className="lg:w-full xl:w-full lg:mt-5 xl:mt-5">
-                    <button className="payment-option" onClick={()=>setPaymentMethod("TarjetaMLC")}>Tarjeta MLC</button>
+                    <button style={{border: paymentMethod === "TarjetaMLC" ? "solid 3px green" : ''}} className="payment-option" onClick={()=>setPaymentMethod("TarjetaMLC")}>Tarjeta MLC</button>
                     {
                         paymentMethod === "TarjetaMLC" &&
                         <div className="my-10 lg:ml-10 xl:ml-10">
                           <h2>Tarjeta:</h2>
                           <div className="flex justify-evenly">
                             <h2>{MLCCard}</h2>
-                            <button onClick={()=>{navigator.clipboard.writeText(MLCCard); setCopiedCard(true); setCopiedPhone(false)}}>{copiedCard ? "✅" : "copiar"}</button>
+                            <button onClick={()=>{navigator.clipboard.writeText(MLCCard!); setCopiedCard(true); setCopiedPhone(false)}}>{copiedCard ? "✅" : "copiar"}</button>
                           </div>
 
                           <h2>Teléfono:</h2>
                           <div className="flex justify-evenly">
                             <h2>{confirmationPhone}</h2>
-                            <button onClick={()=>{navigator.clipboard.writeText(confirmationPhone); setCopiedCard(false); setCopiedPhone(true)}}>{copiedPhone ? "✅" : "copiar"}</button>
+                            <button onClick={()=>{navigator.clipboard.writeText(confirmationPhone!); setCopiedCard(false); setCopiedPhone(true)}}>{copiedPhone ? "✅" : "copiar"}</button>
                           </div>
                         </div>
                     }
                   </div>
                   <div className="lg:w-full xl:w-full lg:mt-5 xl:mt-5">
-                    <button className="payment-option" onClick={(e:any)=>{setPaymentMethod("TarjetaInternacional"), handleStripePayment(e)}}>Visa o Mastercard</button>
+                    <button style={{border: paymentMethod === "TarjetaInternacional" ? "solid 3px green" : ''}} className="payment-option" onClick={(e:any)=>{setPaymentMethod("TarjetaInternacional"), handleStripePayment(e)}}>Visa o Mastercard</button>
                   </div>
                   <div className="lg:w-full xl:w-full lg:mt-5 xl:mt-5">
-                    <button className="payment-option" onClick={()=>setPaymentMethod("Efectivo")}>Efectivo</button>
+                    <button style={{border: paymentMethod === "Efectivo" ? "solid 3px green" : ''}} className="payment-option" onClick={()=>setPaymentMethod("Efectivo")}>Efectivo</button>
                   </div>
                 </div>
               </div>
