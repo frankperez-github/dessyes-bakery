@@ -1,12 +1,13 @@
 'use client'
 
-import { Switch } from "@mui/material";
+import { IconButton, InputAdornment, Switch, TextField } from "@mui/material";
 import Link from "next/link";
 import { useEffect, useState } from "react"
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { DataTable } from "../components/DataTable";
 import { GridColDef } from "@mui/x-data-grid";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 type product = {
     id: string,
@@ -40,7 +41,6 @@ export default function AdminPanel()
                 method: productMethod,
                 body: formData
             }).then(response => {
-                e.target.reset()
                 return response.json();
             }), {
                 pending: `${productMethod === "POST" ? "Creating" : productMethod === "PUT" ? "Updating" : "Deleting"} Product`,
@@ -180,8 +180,6 @@ export default function AdminPanel()
             console.log(e)
         }
     };
-
-    
     
     useEffect(()=>{
         if(!loadingOrders)
@@ -212,6 +210,21 @@ export default function AdminPanel()
         }
     };
 
+    const [showPassPhraseModal, setShowPassPhraseModal]= useState(true)
+    const [showPassword, setShowPassword] = useState(false)
+    const [enterePassPhrase, setEnteredPassPhrase] = useState("")
+
+    const checkPassPhrase = () =>{
+        if(enterePassPhrase === process.env.NEXT_PUBLIC_ADMIN_PASSPHRASE)
+        {
+            setShowPassPhraseModal(false)
+        }
+        else
+        {
+            toast.error("Frase incorrecta.")
+        }
+    }
+
     useEffect(()=>{
         fetchOrders()
         setLoadingOrders(true)
@@ -231,7 +244,6 @@ export default function AdminPanel()
         if(response.ok)
         {
             toast.success("Orden Actualizada")
-            e.target.reset()
         }
         else
         {
@@ -250,14 +262,12 @@ export default function AdminPanel()
         if(response.ok)
         {
             toast.success("Orden Actualizada")
-            e.target.reset()
         }
         else
         {
             toast.error("Ha ocurrido un error, intente otra vez.")
         }
     }
-    
 
     const columns: GridColDef[] = [
         { 
@@ -358,227 +368,260 @@ export default function AdminPanel()
             )
           }    
         }
-      ];
-      
-
+    ];
     
     return(
         <div className="">
+            {
+                showPassPhraseModal &&
+                <div className=" w-1/4 mx-auto absolute top-[40%] left-[37%] items-center grid grid-cols-1 justify-center">
+                    <h2 className="text-lg mb-10">Introduzca la frase de acceso a la administración:</h2>
+                    <div className="flex justify-between">
+                        <TextField
+                            sx={{
+                                width: "70%"
+                            }}
+                            type={showPassword ? "text" : "password"}
+                            label="Frase"
+                            variant="outlined"
+                            onChange={(e)=>setEnteredPassPhrase(e.target.value)}
+                            InputProps={{
+                                endAdornment: (
+                                <InputAdornment position="end">
+                                    <IconButton
+                                    onClick={()=>setShowPassword(!showPassword)}
+                                    edge="end"
+                                    >
+                                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                                    </IconButton>
+                                </InputAdornment>
+                                ),
+                            }}
+                        />
+                        <button className="w-[40%] lg:w-1/4 xl:w-1/4 px-5 py-2 rounded-lg border-2 border-green-600 bg-green-600 text-white font-bold" onClick={()=>checkPassPhrase()}>Acceder</button>
+                    </div>
+                </div>
+            }
             <ToastContainer />
-            <div className="fixed top-[90%] xl:left-[80%] lg:left-[80%] md:left-[80%] left-[65%]">
-                <a href="/" className="xl:text-3xl lg:text-2xl md:text-sm text-xs border-2 border-black bg-gray-300 !z-40 p-5 rounded-lg ">Vista de usuario</a>
-            </div>
-            <div className="w-[92%] my-32 mx-auto p-10">
-                <h1 className="my-4 font-bold text-lg">
-                    Órdenes pendientes:
-                </h1>
-                
-                <DataTable columns={columns} rows={orders.filter((x:Order)=>x.orderStatus === "Procesando")}/>
-            </div>
-            <div className="w-[92%] my-32 mx-auto p-10">
-                <h1 className="my-4 font-bold text-lg">
-                    Órdenes enviándose:
-                </h1>
-                
-                <DataTable columns={columns} rows={orders.filter((x:Order)=>x.orderStatus === "Enviando")}/>
-            </div>
-            <div className="w-[92%] my-32 mx-auto p-10">
-                <h1 className="my-4 font-bold text-lg">
-                    Órdenes entregadas:
-                </h1>
-                
-                <DataTable columns={columns} rows={orders.filter((x:Order)=>x.orderStatus === "Entregada")}/>
-            </div>
-            <div className="w-[92%] my-32 mx-auto p-10">
-                <h1 className="my-4 font-bold text-lg">
-                    Órdenes canceladas:
-                </h1>
-                
-                <DataTable columns={columns} rows={orders.filter((x:Order)=>x.orderStatus === "Cancelada")}/>
-            </div>
-            <div className="w-10/12 my-32 mx-auto border-2 border-red-500 rounded-xl p-10">
-                <h1 className="my-4 font-bold text-lg">
-                    <select name="productMethod" id="" onChange={(e)=>{setProductMethod(e.target.value)}}>
-                        <option value="POST">Insertar</option>
-                        <option value="PUT">Actualizar</option>
-                        <option value="DELETE">Borrar</option>
-                    </select>
-                        producto:
-                    {
-                        productMethod !== "POST" && productMethod !== "GET"  
-                            &&
-                            <select name="" id="" onChange={(e)=>setSelectedProduct(products?.filter((x:any)=>x.id == e.target.value)[0])}>
-                                <option value="default">Select Product</option>
-                                {
-                                    products?.map((product:any, key)=>
-                                        <option key={key} value={product.id} onClick={()=>setSelectedProduct(product)}>{product.name}</option>
-                                    )
-                                }
+            {
+                !showPassPhraseModal &&
+                <>
+                    <div className="fixed top-[90%] xl:left-[80%] lg:left-[80%] md:left-[80%] left-[65%]">
+                        <a href="/" className="xl:text-3xl lg:text-2xl md:text-sm text-xs border-2 border-black bg-gray-300 !z-40 p-5 rounded-lg ">Vista de usuario</a>
+                    </div>
+                    <div className="w-[92%] my-32 mx-auto p-10">
+                        <h1 className="my-4 font-bold text-lg">
+                            Órdenes pendientes:
+                        </h1>
+                        
+                        <DataTable columns={columns} rows={orders.filter((x:Order)=>x.orderStatus === "Procesando")}/>
+                    </div>
+                    <div className="w-[92%] my-32 mx-auto p-10">
+                        <h1 className="my-4 font-bold text-lg">
+                            Órdenes enviándose:
+                        </h1>
+                        
+                        <DataTable columns={columns} rows={orders.filter((x:Order)=>x.orderStatus === "Enviando")}/>
+                    </div>
+                    <div className="w-[92%] my-32 mx-auto p-10">
+                        <h1 className="my-4 font-bold text-lg">
+                            Órdenes entregadas:
+                        </h1>
+                        
+                        <DataTable columns={columns} rows={orders.filter((x:Order)=>x.orderStatus === "Entregada")}/>
+                    </div>
+                    <div className="w-[92%] my-32 mx-auto p-10">
+                        <h1 className="my-4 font-bold text-lg">
+                            Órdenes canceladas:
+                        </h1>
+                        
+                        <DataTable columns={columns} rows={orders.filter((x:Order)=>x.orderStatus === "Cancelada")}/>
+                    </div>
+                    <div className="w-10/12 my-32 mx-auto border-2 border-red-500 rounded-xl p-10">
+                        <h1 className="my-4 font-bold text-lg">
+                            <select name="productMethod" id="" onChange={(e)=>{setProductMethod(e.target.value)}}>
+                                <option value="POST">Insertar</option>
+                                <option value="PUT">Actualizar</option>
+                                <option value="DELETE">Borrar</option>
                             </select>
-                    }
-                </h1>
-                <form onSubmit={onSubmitProduct} name="createForm" className="w-full xl:grid lg:grid grid-cols-2 gap-4 text-lg">
-                    <div className="xl:flex lg:flex flex-row my-10">
-                        <label className="mr-2" htmlFor="name">Nombre:</label>
-                        <input onChange={(e)=>{setSelectedProduct({
-                            id: selectedProduct?.id,
-                            name: e.target.value,
-                            image: selectedProduct?.image,
-                            description: selectedProduct?.description,
-                            unitPrice: selectedProduct?.unitPrice,
-                            defaultQuant: selectedProduct?.defaultQuant,
-                            priority: selectedProduct?.priority
-                        })}} value={selectedProduct?.name} className="border-2" type="text" name="name" id="" />
-                    </div>
-
-                    <div className="xl:flex lg:flex flex-row my-10">
-                        <label className="mr-2" htmlFor="description">Descripción:</label>
-                        <input onChange={(e)=>{setSelectedProduct({
-                            id: selectedProduct?.id,
-                            name: selectedProduct?.name,
-                            image: selectedProduct?.image,
-                            description: e.target.value,
-                            unitPrice: selectedProduct?.unitPrice,
-                            defaultQuant: selectedProduct?.defaultQuant,
-                            priority: selectedProduct?.priority
-                        })}} value={selectedProduct?.description} className="border-2" type="text" name="description" id="" />
-                    </div>
-
-                    <div className="xl:flex lg:flex flex-row my-10">
-                        <label className="mr-2" htmlFor="unitPrice">Precio unitario:</label>
-                        <input onChange={(e)=>{setSelectedProduct({
-                            id: selectedProduct?.id,
-                            name: selectedProduct?.name,
-                            image: selectedProduct?.image,
-                            description: selectedProduct?.description,
-                            unitPrice: e.target.value,
-                            defaultQuant: selectedProduct?.defaultQuant,
-                            priority: selectedProduct?.priority
-                        })}} value={selectedProduct?.unitPrice} className="border-2" type="number" step="any" name="unitPrice" id="" />
-                    </div>
-
-                    <div className="xl:flex lg:flex flex-row my-10">
-                        <label className="mr-2" htmlFor="defaultQuant">Cantidad del paquete:</label>
-                        <input onChange={(e)=>{setSelectedProduct({
-                            id: selectedProduct?.id,
-                            name: selectedProduct?.name,
-                            image: selectedProduct?.image,
-                            description: selectedProduct?.description,
-                            unitPrice: selectedProduct?.unitPrice,
-                            defaultQuant: e.target.value,
-                            priority: selectedProduct?.priority
-                        })}} value={selectedProduct?.defaultQuant} className="border-2" type="number" step="any" name="defaultQuant" id="" />
-                    </div>
-
-                    <div className="xl:flex lg:flex flex-row my-10">
-                        <label className="mr-2" htmlFor="image">Imagen:</label>
-                        <input className="border-2 w-full" type="file" name="image"/>
-                    </div>
-                    <div className="flex my-10 col-span-2">
-                        <button className="border-2 w-1/3 p-2 rounded-lg bg-red-500 text-white mx-auto">
+                                producto:
                             {
-                                productMethod === "POST" ? "Crear" : 
-                                productMethod === "PUT" ? "Actualizar" : "Eliminar"
+                                productMethod !== "POST" && productMethod !== "GET"  
+                                    &&
+                                    <select name="" id="" onChange={(e)=>setSelectedProduct(products?.filter((x:any)=>x.id == e.target.value)[0])}>
+                                        <option value="default">Select Product</option>
+                                        {
+                                            products?.map((product:any, key)=>
+                                                <option key={key} value={product.id} onClick={()=>setSelectedProduct(product)}>{product.name}</option>
+                                            )
+                                        }
+                                    </select>
                             }
-                        </button>
+                        </h1>
+                        <form onSubmit={onSubmitProduct} name="createForm" className="w-full xl:grid lg:grid grid-cols-2 gap-4 text-lg">
+                            <div className="xl:flex lg:flex flex-row my-10">
+                                <label className="mr-2" htmlFor="name">Nombre:</label>
+                                <input onChange={(e)=>{setSelectedProduct({
+                                    id: selectedProduct?.id,
+                                    name: e.target.value,
+                                    image: selectedProduct?.image,
+                                    description: selectedProduct?.description,
+                                    unitPrice: selectedProduct?.unitPrice,
+                                    defaultQuant: selectedProduct?.defaultQuant,
+                                    priority: selectedProduct?.priority
+                                })}} value={selectedProduct?.name} className="border-2" type="text" name="name" id="" />
+                            </div>
+
+                            <div className="xl:flex lg:flex flex-row my-10">
+                                <label className="mr-2" htmlFor="description">Descripción:</label>
+                                <input onChange={(e)=>{setSelectedProduct({
+                                    id: selectedProduct?.id,
+                                    name: selectedProduct?.name,
+                                    image: selectedProduct?.image,
+                                    description: e.target.value,
+                                    unitPrice: selectedProduct?.unitPrice,
+                                    defaultQuant: selectedProduct?.defaultQuant,
+                                    priority: selectedProduct?.priority
+                                })}} value={selectedProduct?.description} className="border-2" type="text" name="description" id="" />
+                            </div>
+
+                            <div className="xl:flex lg:flex flex-row my-10">
+                                <label className="mr-2" htmlFor="unitPrice">Precio unitario:</label>
+                                <input onChange={(e)=>{setSelectedProduct({
+                                    id: selectedProduct?.id,
+                                    name: selectedProduct?.name,
+                                    image: selectedProduct?.image,
+                                    description: selectedProduct?.description,
+                                    unitPrice: e.target.value,
+                                    defaultQuant: selectedProduct?.defaultQuant,
+                                    priority: selectedProduct?.priority
+                                })}} value={selectedProduct?.unitPrice} className="border-2" type="number" step="any" name="unitPrice" id="" />
+                            </div>
+
+                            <div className="xl:flex lg:flex flex-row my-10">
+                                <label className="mr-2" htmlFor="defaultQuant">Cantidad del paquete:</label>
+                                <input onChange={(e)=>{setSelectedProduct({
+                                    id: selectedProduct?.id,
+                                    name: selectedProduct?.name,
+                                    image: selectedProduct?.image,
+                                    description: selectedProduct?.description,
+                                    unitPrice: selectedProduct?.unitPrice,
+                                    defaultQuant: e.target.value,
+                                    priority: selectedProduct?.priority
+                                })}} value={selectedProduct?.defaultQuant} className="border-2" type="number" step="any" name="defaultQuant" id="" />
+                            </div>
+
+                            <div className="xl:flex lg:flex flex-row my-10">
+                                <label className="mr-2" htmlFor="image">Imagen:</label>
+                                <input className="border-2 w-full" type="file" name="image"/>
+                            </div>
+                            <div className="flex my-10 col-span-2">
+                                <button className="border-2 w-1/3 p-2 rounded-lg bg-red-500 text-white mx-auto">
+                                    {
+                                        productMethod === "POST" ? "Crear" : 
+                                        productMethod === "PUT" ? "Actualizar" : "Eliminar"
+                                    }
+                                </button>
+                            </div>
+                        </form>
                     </div>
-                </form>
-            </div>
-            <div className="w-10/12 my-32 mx-auto border-2 border-red-500 rounded-xl p-10">
-                <div className="my-4 font-bold text-lg flex">
-                    <select name="productMethod" id="" onChange={(e)=>{setTransportationMethod(e.target.value)}}>
-                        <option value="POST">Insertar</option>
-                        <option value="PUT">Actualizar</option>
-                        <option value="DELETE">Borrar</option>
-                    </select>
-                    <h1 className="my-4 font-bold text-lg">
-                        transportación:
-                    </h1>
-                    {
-                        loadedTransportations  
-                            &&
-                            <select name="" id="" onChange={(e)=>setSelectedTransportation(transportations.filter((x:any)=>x.id == e.target.value)[0])}>
-                                <option value="Seleccione">Seleccione</option>
-                                {
-                                    transportations.map((transportation:any, key)=>
-                                        <option key={key} value={transportation.id} onClick={()=>setSelectedTransportation(transportation)}>{transportation.city}</option>
-                                    )
-                                }
+                    <div className="w-10/12 my-32 mx-auto border-2 border-red-500 rounded-xl p-10">
+                        <div className="my-4 font-bold text-lg flex">
+                            <select name="productMethod" id="" onChange={(e)=>{setTransportationMethod(e.target.value)}}>
+                                <option value="POST">Insertar</option>
+                                <option value="PUT">Actualizar</option>
+                                <option value="DELETE">Borrar</option>
                             </select>
-                    }
-                </div>
-                <form action="" name="createTransportation" onSubmit={(e)=>onSubmitTransportation(e)} className="w-full xl:grid lg:grid grid-cols-2 gap-4 text-lg">
-                    <div className="xl:flex lg:flex flex-row my-10">
-                        <label className="mr-2" htmlFor="city">Municipio:</label>
-                        {
-                            <input className="border-2" type="text" name="city" id="" value={selectedTransportation?.city} onChange={(e)=>{setSelectedTransportation({
-                                id: selectedTransportation?.id,
-                                city: e.target.value,
-                                transportation_price: selectedTransportation?.transportation_price
-                            })}}/>
-                        }
-                    </div>
-
-                    <div className="xl:flex lg:flex flex-row my-10">
-                        <label className="mr-2" htmlFor="transportation_price">Precio:</label>
-                        {
-                            <input className="border-2" type="number" step="any" name="transportation_price" id="" value={selectedTransportation?.transportation_price} onChange={(e)=>{setSelectedTransportation({
-                                id: selectedTransportation?.id,
-                                city: selectedTransportation?.city,
-                                transportation_price: e.target.value
-                            
-                            })}}/>
-                        }
-                    </div>
-                    <div className="flex my-10 col-span-2">
-                        <button className="border-2 w-1/3 p-2 rounded-lg bg-red-500 text-white mx-auto">
+                            <h1 className="my-4 font-bold text-lg">
+                                transportación:
+                            </h1>
                             {
-                                transportationMethod === "POST" ? "Crear" : 
-                                transportationMethod === "PUT" ? "Actualizar" : "Eliminar"
+                                loadedTransportations  
+                                    &&
+                                    <select name="" id="" onChange={(e)=>setSelectedTransportation(transportations.filter((x:any)=>x.id == e.target.value)[0])}>
+                                        <option value="Seleccione">Seleccione</option>
+                                        {
+                                            transportations.map((transportation:any, key)=>
+                                                <option key={key} value={transportation.id} onClick={()=>setSelectedTransportation(transportation)}>{transportation.city}</option>
+                                            )
+                                        }
+                                    </select>
                             }
-                        </button>
+                        </div>
+                        <form action="" name="createTransportation" onSubmit={(e)=>onSubmitTransportation(e)} className="w-full xl:grid lg:grid grid-cols-2 gap-4 text-lg">
+                            <div className="xl:flex lg:flex flex-row my-10">
+                                <label className="mr-2" htmlFor="city">Municipio:</label>
+                                {
+                                    <input className="border-2" type="text" name="city" id="" value={selectedTransportation?.city} onChange={(e)=>{setSelectedTransportation({
+                                        id: selectedTransportation?.id,
+                                        city: e.target.value,
+                                        transportation_price: selectedTransportation?.transportation_price
+                                    })}}/>
+                                }
+                            </div>
+
+                            <div className="xl:flex lg:flex flex-row my-10">
+                                <label className="mr-2" htmlFor="transportation_price">Precio:</label>
+                                {
+                                    <input className="border-2" type="number" step="any" name="transportation_price" id="" value={selectedTransportation?.transportation_price} onChange={(e)=>{setSelectedTransportation({
+                                        id: selectedTransportation?.id,
+                                        city: selectedTransportation?.city,
+                                        transportation_price: e.target.value
+                                    
+                                    })}}/>
+                                }
+                            </div>
+                            <div className="flex my-10 col-span-2">
+                                <button className="border-2 w-1/3 p-2 rounded-lg bg-red-500 text-white mx-auto">
+                                    {
+                                        transportationMethod === "POST" ? "Crear" : 
+                                        transportationMethod === "PUT" ? "Actualizar" : "Eliminar"
+                                    }
+                                </button>
+                            </div>
+                        </form>
+
+
                     </div>
-                </form>
-
-
-            </div>
-            <div className="w-10/12 my-32 mx-auto border-2 border-red-500 rounded-xl p-10">
-                <table className="w-1/2 justify-between mx-auto">
-                    <thead>
-                        <tr>
-                            <th>Prioridad:</th>
-                            <th>Nombre:</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {
-                            products?.map((p:any, key)=>
-                                <tr key={key} className="text-center">
-                                    <td>
-                                        <select name="" defaultValue={p.priority} id="" onChange={(e)=>{handlePriorityChange(e, p.id)}}>
-                                            {
-                                                products?.map((prod, i)=>(
-                                                    <option value={i} key={i} >
-                                                        {i}
-                                                    </option>
-                                                ))
-                                            }
-                                        </select>
-                                    </td>
-                                    <td className="text-center">
-                                        {p.name}
-                                    </td>
+                    <div className="w-10/12 my-32 mx-auto border-2 border-red-500 rounded-xl p-10">
+                        <table className="w-1/2 justify-between mx-auto">
+                            <thead>
+                                <tr>
+                                    <th>Prioridad:</th>
+                                    <th>Nombre:</th>
                                 </tr>
-                            )
-                        }
-                    </tbody>
-                </table>
-                <div className="flex mt-10 col-span-2">
-                    <button onClick={handlePrioritySubmit} className="border-2 w-1/3 p-2 rounded-lg bg-red-500 text-white mx-auto">
-                        Guardar
-                    </button>
-                </div>
-            </div>
+                            </thead>
+                            <tbody>
+                                {
+                                    products?.map((p:any, key)=>
+                                        <tr key={key} className="text-center">
+                                            <td>
+                                                <select name="" defaultValue={p.priority} id="" onChange={(e)=>{handlePriorityChange(e, p.id)}}>
+                                                    {
+                                                        products?.map((prod, i)=>(
+                                                            <option value={i} key={i} >
+                                                                {i}
+                                                            </option>
+                                                        ))
+                                                    }
+                                                </select>
+                                            </td>
+                                            <td className="text-center">
+                                                {p.name}
+                                            </td>
+                                        </tr>
+                                    )
+                                }
+                            </tbody>
+                        </table>
+                        <div className="flex mt-10 col-span-2">
+                            <button onClick={handlePrioritySubmit} className="border-2 w-1/3 p-2 rounded-lg bg-red-500 text-white mx-auto">
+                                Guardar
+                            </button>
+                        </div>
+                    </div>
+                </>
+            }
         </div>
     )
 }
