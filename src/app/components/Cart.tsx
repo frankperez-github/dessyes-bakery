@@ -31,7 +31,7 @@ function CartNoStripe({transportations, setShowOrder, order, setOrder, MLCPrice,
     const [copiedPhone, setCopiedPhone] = useState(false)
 
     const [deliveryAddress, setDeliveryAddress] = useState(window.localStorage.getItem("deliveryAddress") || "")
-    const [selectedTransportation, setSelectedTransportation] = useState<{city:string, transportation_price:number}>(window.localStorage.getItem("selectedTransportation") ? JSON.parse(window.localStorage.getItem("selectedTransportation")!) : {city: "", transportation_price: 0})
+    const [selectedTransportation, setSelectedTransportation] = useState<{city:string, transportation_price:number}>(process.env.NEXT_PUBLIC_TRANSPORTATION_AVAILABLE === "true" ? (window.localStorage.getItem("selectedTransportation") ? JSON.parse(window.localStorage.getItem("selectedTransportation")!) : {city: "", transportation_price: 0}) : {city: "", transportation_price: 0})
     const [isLoading, setIsLoading] = useState(false)
 
 
@@ -63,13 +63,13 @@ function CartNoStripe({transportations, setShowOrder, order, setOrder, MLCPrice,
         })
         
         newMessage += "%0a---------------------"
-        newMessage+=`%0a💰Subtotal: ${order.total}cup`
-        newMessage+=`%0a💰Costo envio: ${selectedTransportation?.transportation_price}cup`
+        process.env.NEXT_PUBLIC_TRANSPORTATION_AVAILABLE === "true" ? newMessage+=`%0a💰Subtotal: ${order.total}cup` : ""
+        process.env.NEXT_PUBLIC_TRANSPORTATION_AVAILABLE === "true" ? newMessage+=`%0a💰Costo envio: ${selectedTransportation?.transportation_price}cup` : ""
         newMessage+=`%0a💰Monto Total: ${order.total + selectedTransportation?.transportation_price}cup`
         newMessage+=`%0a Método de Pago: ${paymentMethod}`
         newMessage+=`%0a Nombre: ${name}`
         newMessage+=`%0a Teléfono: ${phone}`
-        newMessage+=`%0a Dirección de entrega: ${deliveryAddress}, ${selectedTransportation?.city}`
+        process.env.NEXT_PUBLIC_TRANSPORTATION_AVAILABLE === "true" ? newMessage+=`%0a Dirección de entrega: ${deliveryAddress}, ${selectedTransportation?.city}` : ""
 
         setMessage(newMessage)
         
@@ -95,7 +95,7 @@ function CartNoStripe({transportations, setShowOrder, order, setOrder, MLCPrice,
     const { user } = useAuth()
 
     const handleSubmit = async () =>{
-        if(selectedTransportation?.city !== "" && deliveryAddress !== "" && name !== "" && phone !== "") 
+        if((process.env.NEXT_PUBLIC_TRANSPORTATION_AVAILABLE === "false" || (selectedTransportation?.city !== "" && deliveryAddress !== "")) && name !== "" && phone !== "") 
         {
             if(paymentStatus && paymentStatus !== "success")
             {
@@ -111,7 +111,7 @@ function CartNoStripe({transportations, setShowOrder, order, setOrder, MLCPrice,
               paymentStatus: paymentStatus === "success" ? "Completado" : "Pendiente",
               userId: user?.id,
               total: `${total + " CUP" + (MLCPrice ? " / " + (total / MLCPrice).toFixed(2) + " MLC" : '') + (USDPrice ? " / " + (total / USDPrice).toFixed(2) + " USD" : "")}`,
-              deliveryAddress: deliveryAddress + ", " + selectedTransportation?.city,
+              deliveryAddress: process.env.NEXT_PUBLIC_TRANSPORTATION_AVAILABLE === "true" ? deliveryAddress + ", " + selectedTransportation?.city : "",
               orderStatus: "Procesando",
               created_at: new Date().toISOString().replace('T', ' ').replace('Z', '+00').replace(/\.\d+/, (ms) => `.${ms.slice(1, 4)}000`),
               paymentMethod: paymentMethod === "TarjetaInternacional" ?
@@ -150,7 +150,10 @@ function CartNoStripe({transportations, setShowOrder, order, setOrder, MLCPrice,
 
             if(responseOrder.ok && responseProds.ok)
             {
-              window.location.replace(`https://wa.me/+5353103058?text=${message}`)
+              if(process.env.NEXT_PUBLIC_WHATSAPP_ORDER_AVAILABLE==="true")
+              {
+                window.location.replace(`https://wa.me/${process.env.NEXT_PUBLIC_CONFIRMATION_PHONE}?text=${message}`)
+              }
               setOrder({"products": [], "total": 0})
               setIsLoading(false)
             }
@@ -251,11 +254,14 @@ function CartNoStripe({transportations, setShowOrder, order, setOrder, MLCPrice,
                         <td></td>
                         <td className='font-bold text-right'>{order.total} CUP</td>
                     </tr>
-                    <tr >
-                        <td className='text-left'>Envío:</td>
-                        <td></td>
-                        <td className='font-bold text-right' >{selectedTransportation?.transportation_price} CUP</td>
-                    </tr>
+                    {
+                      process.env.NEXT_PUBLIC_TRANSPORTATION_AVAILABLE === "true" &&
+                      <tr >
+                          <td className='text-left'>Envío:</td>
+                          <td></td>
+                          <td className='font-bold text-right' >{selectedTransportation?.transportation_price} CUP</td>
+                      </tr>
+                    }
                     <tr className='border-[#c6c6c6] border-t-2'>
                         <td className='text-left'>Total CUP:</td>
                         <td></td>
@@ -280,17 +286,22 @@ function CartNoStripe({transportations, setShowOrder, order, setOrder, MLCPrice,
                   </tbody>
                 </table>
                 <form action="" className="mb-16">
-                    <h2 className='font-bold text-2xl mt-14 mb-5'>Contacto de entrega:</h2>
+                    <h2 className='font-bold text-2xl mt-14 mb-5'>Contacto de {process.env.NEXT_PUBLIC_TRANSPORTATION_AVAILABLE === "true" ? "entrega": "recogida"}:</h2>
                     <div className="flex justify-between gap-5">
-                        <h2 className='font-bold mt-5'>Municipio:</h2>
-                        <select name="" value={JSON.parse(window.localStorage.getItem("selectedTransportation")!)?.city} id="" className="mt-5" onChange={(e)=>setSelectedTransportation(transportations.filter((t:any)=>t?.city === e.target.value)[0])}>
-                            <option value=""  className='font-bold'  id="defaultCity">Seleccione</option>
-                            {
-                                transportations.map((transp:any)=>(
-                                    <option key={transp.city} value={transp.city}>{transp.city}</option>
-                                ))
-                            }
-                        </select>
+                        {
+                          process.env.NEXT_PUBLIC_TRANSPORTATION_AVAILABLE === "true" &&
+                          <>
+                            <h2 className='font-bold mt-5'>Municipio:</h2>
+                            <select name="" value={JSON.parse(window.localStorage.getItem("selectedTransportation")!)?.city} id="" className="mt-5" onChange={(e)=>setSelectedTransportation(transportations.filter((t:any)=>t?.city === e.target.value)[0])}>
+                                <option value=""  className='font-bold'  id="defaultCity">Seleccione</option>
+                                {
+                                    transportations.map((transp:any)=>(
+                                        <option key={transp.city} value={transp.city}>{transp.city}</option>
+                                    ))
+                                }
+                            </select>
+                          </>
+                        }
                     </div>
                     {
                         selectedTransportation?.city !== "" &&
@@ -366,9 +377,12 @@ function CartNoStripe({transportations, setShowOrder, order, setOrder, MLCPrice,
                         </div>
                     }
                   </div>
-                  <div className="lg:w-full xl:w-full lg:mt-5 xl:mt-5">
-                    <button style={{border: paymentMethod === "TarjetaInternacional" ? "solid 3px green" : ''}} className="payment-option" onClick={(e:any)=>{setPaymentMethod("TarjetaInternacional"), handleStripePayment(e)}}>Visa o Mastercard</button>
-                  </div>
+                  {
+                    process.env.NEXT_PUBLIC_STRIPE_PAYMENT_AVAILABLE==="true" &&
+                    <div className="lg:w-full xl:w-full lg:mt-5 xl:mt-5">
+                      <button style={{border: paymentMethod === "TarjetaInternacional" ? "solid 3px green" : ''}} className="payment-option" onClick={(e:any)=>{setPaymentMethod("TarjetaInternacional"), handleStripePayment(e)}}>Visa o Mastercard</button>
+                    </div>
+                  }
                   <div className="lg:w-full xl:w-full lg:mt-5 xl:mt-5">
                     <button style={{border: paymentMethod === "Efectivo" ? "solid 3px green" : ''}} className="payment-option" onClick={()=>setPaymentMethod("Efectivo")}>Efectivo</button>
                   </div>
