@@ -103,3 +103,8 @@
 {
   opacity: 0.8;
 }
+
+.centered-cell {
+  text-align: center !important;
+  justify-content: center !important;
+}

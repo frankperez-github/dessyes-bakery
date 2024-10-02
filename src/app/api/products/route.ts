@@ -33,18 +33,16 @@ type FormDataObject = {
 
 export async function POST(req: NextRequest) {
   try {
-    // Parse form data from the request
     const body = await req.formData();
+    if(!body) return NextResponse.json({ error: "Failed to insert product" }, { status: 500 });
 
     let imageUrl = "";
     let formDataObject: FormDataObject = {};
 
-    // Handle file upload
     for (const [key, value] of Array.from(body.entries())) {
       if (typeof value === "object") {
         const imageName = Date.now() + "-" + value.name;
 
-        // Upload the file to Supabase storage
         const { data, error: uploadError } = await supabase.storage
           .from("images")
           .upload(imageName, value);
@@ -54,7 +52,6 @@ export async function POST(req: NextRequest) {
           return NextResponse.json({ error: "Failed to upload image" }, { status: 500 });
         }
 
-        // Construct the public URL for the uploaded image
         const { data: urlData } = supabase.storage
           .from("images")
           .getPublicUrl(imageName);
@@ -65,7 +62,6 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Add the image URL to the form data object
     formDataObject.image = imageUrl;
 
     const { data: productsList, error: errorGet } = await supabase
@@ -74,7 +70,6 @@ export async function POST(req: NextRequest) {
     
       if (productsList) {
         for (let i = 0; i < productsList?.length!; i++) {
-          console.log(productsList[i].priority)
           productsList[i].priority = parseInt(productsList[i].priority)+1
           const { data: product, error } = await supabase
             .from('Products')
@@ -88,7 +83,6 @@ export async function POST(req: NextRequest) {
         }
       }
 
-    // Insert product into the PostgreSQL database
     const { data: product, error } = await supabase
       .from('Products')
       .insert([formDataObject]);
@@ -98,7 +92,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Failed to insert product" }, { status: 500 });
     }
 
-    // Return the created product as a JSON response
     return NextResponse.json({ product });
   } catch (error) {
     console.error("Error processing request:", error);

@@ -1,5 +1,8 @@
+import { GridColDef } from "@mui/x-data-grid";
 import { useEffect, useState } from "react"
 import { toast } from "react-toastify"
+import { DataTable } from "../DataTable";
+import { IconEdit, IconTrash, IconX } from "@tabler/icons-react";
 
 export default function AdminProducts()
 {
@@ -7,6 +10,11 @@ export default function AdminProducts()
     const [productMethod, setProductMethod] = useState("POST")
     const [selectedProduct, setSelectedProduct] = useState({id:"", name:"", image:"", description:"", unitPrice:"", defaultQuant:"", priority: ""})
 
+    const fetchProducts = () =>{
+        fetch(`${window.location.origin}/api/products`)
+        .then(response => response.json())
+        .then(data => setProducts(data.products))
+    }
     type product = {
         id: string,
         name: string, 
@@ -18,20 +26,37 @@ export default function AdminProducts()
     }
 
     useEffect(()=>{
-        fetch(`${window.location.origin}/api/products`)
-        .then(response => response.json())
-        .then(data => setProducts(data.products))
-        
+        fetchProducts()
     },[productMethod])
 
-    const handlePriorityChange = (e:any, id:any) => {
+    const [priorityChanged, setPriorityChanged] = useState(false);
+
+    const handlePriorityChange = (e: any, id: any) => {
+        const oldPriority = products.find((x:product)=>x.id === id)?.priority;
         const newPriority = e.target.value;
-        const updatedProducts = products?.map((product:product) =>
-          product.id === id ? { ...product, priority: newPriority } : product
+
+        const updatedProducts = products?.map((product: product) =>
+            product.id === id
+                ? { ...product, priority: newPriority }
+                : product.priority == newPriority
+                ? { ...product, priority: oldPriority }
+                : product
         );
-    
+
         setProducts(updatedProducts);
+
+        if (oldPriority !== newPriority) {
+            setPriorityChanged(true);
+        }
     };
+
+    useEffect(() => {
+        if (priorityChanged) {
+            handlePrioritySubmit();
+            setPriorityChanged(false);
+        }
+    }, [priorityChanged]);
+
 
     const handlePrioritySubmit = async () => {
         try {
@@ -58,9 +83,9 @@ export default function AdminProducts()
               })
             ),
             {
-              pending: 'Updating products?...',
-              success: 'Products updated successfully!',
-              error: 'Failed to update products?.',
+              pending: 'Actualizando productos...',
+              success: 'Productos actualizados satisfactoriamente!',
+              error: 'Falló la actualización de productos.',
             }
           );
         } catch (error) {
@@ -69,9 +94,9 @@ export default function AdminProducts()
     };
 
     const onSubmitProduct = async (e: any) => {
-        e.preventDefault();
-        const formData = new FormData(e.target);
-        formData.append("priority", 0+"")
+        e?.preventDefault();
+        const formData = new FormData(e?.target);
+        formData.append("priority", selectedProduct?.priority ? selectedProduct?.priority+"" : "0")
         await toast.promise(
             fetch(`${(typeof(window) !== undefined) ? window.location.origin : ''}/api/products/${selectedProduct?.id}`, {
                 method: productMethod,
@@ -79,137 +104,228 @@ export default function AdminProducts()
             }).then(response => {
                 return response.json();
             }), {
-                pending: `${productMethod === "POST" ? "Creating" : productMethod === "PUT" ? "Updating" : "Deleting"} Product`,
-                success: `Product ${productMethod === "POST" ? "created" : productMethod === "PUT" ? "updated" : "deleted"} 👌`,
+                pending: `${productMethod === "POST" ? "Creando" : (productMethod === "PUT" ? "Actualizando" : "Eliminando")} producto`,
+                success: `Producto ${productMethod === "POST" ? "creado" : (productMethod === "PUT" ? "actualizado" : "eliminado")} 👌`,
                 error: `There was an error 🤯`
             }
         );
+        setShowEditModal(false)
+        setSelectedProduct(null!)
+        fetchProducts()
     }
-    return(
-        <div className="w-10/12 my-32 mx-auto border-2 border-red-500 rounded-xl p-10">
-            <h1 className="my-4 font-bold text-lg">
-                <select name="productMethod" id="" onChange={(e)=>{setProductMethod(e.target.value)}}>
-                    <option value="POST">Insertar</option>
-                    <option value="PUT">Actualizar</option>
-                    <option value="DELETE">Borrar</option>
-                </select>
-                    producto:
-                {
-                    productMethod !== "POST" && productMethod !== "GET"  
-                        &&
-                        <select name="" id="" onChange={(e)=>setSelectedProduct(products?.filter((x:any)=>x.id == e.target.value)[0])}>
-                            <option value="default">Select Product</option>
+
+    const [showEditModal, setShowEditModal] = useState(false)
+
+    const handleEditButtonClick = (product: product) => {
+        setProductMethod("PUT")
+        setSelectedProduct(product)
+        setShowEditModal(true)
+    }
+
+    const handleRemoveButtonClick = (product: product) =>{
+        setProductMethod("DELETE") 
+        setSelectedProduct(product)
+    }
+    useEffect(()=>{
+        if(productMethod === "DELETE")
+        {
+            if(confirm("Quiere borrar el producto "+selectedProduct?.name+"?")) onSubmitProduct(null)
+        }
+    },[productMethod])
+
+    const [productHasChanged, setProductHasChanged] = useState(false)
+
+    useEffect(()=>{
+        setProductHasChanged(products.filter((x:product)=>
+            x.id == selectedProduct?.id &&
+            x.defaultQuant == selectedProduct?.defaultQuant &&
+            x.description == selectedProduct?.description &&
+            x.name == selectedProduct?.name &&
+            x.unitPrice == selectedProduct?.unitPrice
+     ).length == 1)
+    },[selectedProduct])
+
+
+    const columns: GridColDef[] = [
+        {
+          field: 'name', 
+          headerName: 'Nombre', 
+          width: 180, 
+          sortable: false,
+          renderCell: (params: any) => <p>{params.row.name}</p>,
+        },
+        { 
+          field: 'description', 
+          headerName: 'Descripción', 
+          width: 350, 
+          sortable: false,
+          renderCell: (params: any) => <p>{params.row.description}</p>,
+        },
+        { 
+          field: 'unitPrice', 
+          headerName: 'Precio por unidad', 
+          width: 150, 
+          sortable: true,
+          renderCell: (params: any) => <p className="">{params.row.unitPrice} CUP</p>,
+          cellClassName: 'centered-cell'
+        },
+        { 
+          field: 'defaultQuant', 
+          headerName: 'Cantidad del pack', 
+          width: 150, 
+          sortable: true,
+          renderCell: (params: any) => <p className="">{params.row.defaultQuant}</p>,
+          cellClassName: 'centered-cell'
+        },
+        { 
+          field: 'priority', 
+          headerName: 'Prioridad al mostrar', 
+          sortable: true, 
+          width: 160, 
+          renderCell: (params: any) => 
+          {
+            const p = params.row
+            return (
+                <select name="" id="" onChange={(e)=>{handlePriorityChange(e, p.id)}}>
+                    <option value="">{p.priority}</option>
+                    {
+                        new Array(products.length).fill(null)?.map((_:any, i:number)=>{
+                            if(i != p.priority)
                             {
-                                products?.map((product:any, key:number)=>
-                                    <option key={key} value={product.id} onClick={()=>setSelectedProduct(product)}>{product.name}</option>
+                                return(
+                                    <option value={i} key={i} >
+                                        {i}
+                                    </option>
                                 )
                             }
-                        </select>
-                }
-            </h1>
-            <form onSubmit={onSubmitProduct} name="createForm" className="w-full xl:grid lg:grid grid-cols-2 gap-4 text-lg">
-                <div className="xl:flex lg:flex flex-row my-10">
-                    <label className="mr-2" htmlFor="name">Nombre:</label>
-                    <input onChange={(e)=>{setSelectedProduct({
-                        id: selectedProduct?.id,
-                        name: e.target.value,
-                        image: selectedProduct?.image,
-                        description: selectedProduct?.description,
-                        unitPrice: selectedProduct?.unitPrice,
-                        defaultQuant: selectedProduct?.defaultQuant,
-                        priority: selectedProduct?.priority
-                    })}} value={selectedProduct?.name} className="border-2" type="text" name="name" id="" />
-                </div>
-
-                <div className="xl:flex lg:flex flex-row my-10">
-                    <label className="mr-2" htmlFor="description">Descripción:</label>
-                    <input onChange={(e)=>{setSelectedProduct({
-                        id: selectedProduct?.id,
-                        name: selectedProduct?.name,
-                        image: selectedProduct?.image,
-                        description: e.target.value,
-                        unitPrice: selectedProduct?.unitPrice,
-                        defaultQuant: selectedProduct?.defaultQuant,
-                        priority: selectedProduct?.priority
-                    })}} value={selectedProduct?.description} className="border-2" type="text" name="description" id="" />
-                </div>
-
-                <div className="xl:flex lg:flex flex-row my-10">
-                    <label className="mr-2" htmlFor="unitPrice">Precio unitario:</label>
-                    <input onChange={(e)=>{setSelectedProduct({
-                        id: selectedProduct?.id,
-                        name: selectedProduct?.name,
-                        image: selectedProduct?.image,
-                        description: selectedProduct?.description,
-                        unitPrice: e.target.value,
-                        defaultQuant: selectedProduct?.defaultQuant,
-                        priority: selectedProduct?.priority
-                    })}} value={selectedProduct?.unitPrice} className="border-2" type="number" step="any" name="unitPrice" id="" />
-                </div>
-
-                <div className="xl:flex lg:flex flex-row my-10">
-                    <label className="mr-2" htmlFor="defaultQuant">Cantidad del paquete:</label>
-                    <input onChange={(e)=>{setSelectedProduct({
-                        id: selectedProduct?.id,
-                        name: selectedProduct?.name,
-                        image: selectedProduct?.image,
-                        description: selectedProduct?.description,
-                        unitPrice: selectedProduct?.unitPrice,
-                        defaultQuant: e.target.value,
-                        priority: selectedProduct?.priority
-                    })}} value={selectedProduct?.defaultQuant} className="border-2" type="number" step="any" name="defaultQuant" id="" />
-                </div>
-
-                <div className="xl:flex lg:flex flex-row my-10">
-                    <label className="mr-2" htmlFor="image">Imagen:</label>
-                    <input className="border-2 w-full" type="file" name="image"/>
-                </div>
-                <div className="flex my-10 col-span-2">
-                    <button className="border-2 w-1/3 p-2 rounded-lg bg-red-500 text-white mx-auto">
-                        {
-                            productMethod === "POST" ? "Crear" : 
-                            productMethod === "PUT" ? "Actualizar" : "Eliminar"
-                        }
-                    </button>
-                </div>
-            </form>
-            <div className="w-10/12 my-32 mx-auto border-2 border-red-500 rounded-xl p-10">
-                <table className="w-1/2 justify-between mx-auto">
-                    <thead>
-                        <tr>
-                            <th>Prioridad:</th>
-                            <th>Nombre:</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {
-                            products?.map((p:any, key:number)=>
-                                <tr key={key} className="text-center">
-                                    <td>
-                                        <select name="" defaultValue={p.priority} id="" onChange={(e)=>{handlePriorityChange(e, p.id)}}>
-                                            {
-                                                products?.map((prod:product, i:number)=>(
-                                                    <option value={i} key={i} >
-                                                        {i}
-                                                    </option>
-                                                ))
-                                            }
-                                        </select>
-                                    </td>
-                                    <td className="text-center">
-                                        {p.name}
-                                    </td>
-                                </tr>
-                            )
-                        }
-                    </tbody>
-                </table>
-                <div className="flex mt-10 col-span-2">
-                    <button onClick={handlePrioritySubmit} className="border-2 w-1/3 p-2 rounded-lg bg-red-500 text-white mx-auto">
-                        Guardar
-                    </button>
-                </div>
+                        })
+                    }
+                </select>
+            )
+          },
+          cellClassName: 'centered-cell'
+        },
+        { 
+          field: 'stock', 
+          headerName: 'Stock', 
+          sortable: true, 
+          width: 160, 
+          renderCell: (params: any) => <p className="">{parseInt(process.env.NEXT_PUBLIC_MEMBERSHIP!)>1 ? params.row.stock : ""}</p>,
+          cellClassName: 'centered-cell'
+        },
+        { 
+          field: 'actions', 
+          headerName: 'Acciones', 
+          sortable: false, 
+          width: 160, 
+          renderCell: (params: any) => 
+            <div className="flex gap-5">
+                <p className="cursor-pointer" onClick={()=>handleRemoveButtonClick(params.row)}><IconTrash/></p>
+                <p className="cursor-pointer" onClick={()=>handleEditButtonClick(params.row)}><IconEdit /></p>
+            </div>,
+          cellClassName: 'centered-cell'
+        }
+    ];
+    
+    return(
+        <div className="w-[75%] my-5 mx-auto rounded-xl p-10">
+            <div className="w-full flex justify-end">
+                <button onClick={()=>{setShowEditModal(true), setProductMethod("POST")}} className="border-2 w-[20%] mb-12 p-2 rounded-lg bg-gray-500 text-white">
+                    Crear producto
+                </button>
             </div>
+            <DataTable columns={columns} rows={products}/>
+            {
+                showEditModal &&
+                <div onClick={()=>setShowEditModal(false)} className="fixed top-0 left-0 w-full h-full bg-gray-500 bg-opacity-50 z-10 backdrop-blur-sm flex justify-center items-center overflow-auto">
+                    <div onClick={(e) => e.stopPropagation()} className="relative z-20 p-10 font-bold text-lg w-full max-w-5xl mx-auto bg-white rounded-xl shadow-lg overflow-y-auto max-h-[90vh]">
+                        <div onClick={()=>setShowEditModal(false)} className="flex justify-end cursor-pointer"><IconX /></div>
+                        <h1>{productMethod === "POST" ? "Crear producto" : "Actualizar producto"}: {productMethod === "PUT" ? selectedProduct?.name : ""}</h1>
+                        <form onSubmit={onSubmitProduct} name="createForm" className="items-center w-full lg:grid xl:grid grid-cols-2 gap-4 text-lg">
+                            <div className="w-8/12 flex flex-col gap-4 my-10">
+                                <label className="mr-2" htmlFor="name">Nombre:</label>
+                                <input
+                                    onChange={(e) => {
+                                        setSelectedProduct({
+                                            ...selectedProduct,
+                                            name: e.target.value,
+                                        });
+                                    }}
+                                    value={selectedProduct?.name}
+                                    className="border-2 font-normal"
+                                    type="text"
+                                    name="name"
+                                    id=""
+                                />
+                            </div>
+
+                            <div className="w-8/12 flex flex-col gap-4 my-10">
+                                <label className="mr-2" htmlFor="description">Descripción:</label>
+                                <textarea
+                                    onChange={(e) => {
+                                        setSelectedProduct({
+                                            ...selectedProduct,
+                                            description: e.target.value,
+                                        });
+                                    }}
+                                    value={selectedProduct?.description}
+                                    className="border-2 font-normal h-auto"
+                                    name="description"
+                                    id=""
+                                />
+                            </div>
+
+                            <div className="w-8/12 flex flex-col gap-4 my-10">
+                                <label className="mr-2" htmlFor="unitPrice">Precio por unidad:</label>
+                                <input
+                                    onChange={(e) => {
+                                        setSelectedProduct({
+                                            ...selectedProduct,
+                                            unitPrice: e.target.value,
+                                        });
+                                    }}
+                                    value={selectedProduct?.unitPrice}
+                                    className="border-2 font-normal w-auto"
+                                    type="number"
+                                    step="any"
+                                    name="unitPrice"
+                                    id=""
+                                />
+                            </div>
+
+                            <div className="w-8/12 flex flex-col gap-4 my-10">
+                                <label className="w-1/2" htmlFor="defaultQuant">Cantidad:</label>
+                                <input
+                                    onChange={(e) => {
+                                        setSelectedProduct({
+                                            ...selectedProduct,
+                                            defaultQuant: e.target.value,
+                                        });
+                                    }}
+                                    value={selectedProduct?.defaultQuant}
+                                    className="border-2 font-normal w-auto h-auto"
+                                    type="number"
+                                    step="any"
+                                    name="defaultQuant"
+                                    id=""
+                                />
+                            </div>
+
+                            <div className="w-8/12 flex flex-col gap-4 my-10">
+                                <label className="mr-2" htmlFor="image">Imagen:</label>
+                                <input className="border-2 w-auto font-normal" type="file" name="image" />
+                            </div>
+
+                            <div className="flex my-10 col-span-2">
+                                <button disabled={productHasChanged} style={{opacity: productHasChanged ? "0.6" : "1"}} className="border-2 w-1/3 p-2 rounded-lg bg-green-500 text-white mx-auto">
+                                    {productMethod === "POST" ? "Crear" : "Actualizar"}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            }
+            
         </div>
     )
 }

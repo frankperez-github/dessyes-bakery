@@ -85,7 +85,7 @@ export default function AdminPanel()
             <ToastContainer />
             {
                 !showPassPhraseModal &&
-                <div className="w-[85%] ml-auto">
+                <div className="w-[95%] ml-auto">
                     <DashBoardMenu setOpenSection={setOpenSection} openSection={openSection}/>
                     {
                         openSection === "AdminOrders"

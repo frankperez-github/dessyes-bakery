@@ -26,7 +26,7 @@ const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
     textAlign: 'center', // Default: Center align text in header cells
   },
   '& .MuiDataGrid-columnHeaderTitleContainer': {
-    justifyContent: 'left', // Default: Center header content horizontally
+    justifyContent: 'center', // Default: Center header content horizontally
   },
   '& .MuiDataGrid-columnHeaderTitle': {
     fontWeight: 'bold',
@@ -67,9 +67,9 @@ export const DataTable = ({ columns, rows }: { columns: GridColDef[]; rows: {}[]
             paginationModel: { page: 0, pageSize: 10 },
           },
         }}
-        autoHeight // Automatically adjusts height based on the content
+        autoHeight
         pageSizeOptions={[5, 10, 15, 20, rows?.length > 100 ? 100 : 25]}
-        getRowHeight={() => 'auto'} // Automatically adjust row height
+        getRowHeight={() => 'auto'}
       />
     </div>
   );

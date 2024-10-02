@@ -108,15 +108,15 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
   const { id } = params;
 
   try {
-    // Fetch the product to get the image filename
+    // Fetch the product to get the image filename and priority
     const { data: product, error: fetchError } = await supabase
       .from('Products')
-      .select('image')
+      .select('image, priority')
       .eq('id', id)
       .single();
 
-    if (fetchError) {
-      console.error("Error fetching product for deletion:", fetchError.message);
+    if (fetchError || !product) {
+      console.error("Error fetching product for deletion:", fetchError?.message || "Product not found");
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
 
@@ -128,6 +128,34 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
     if (deleteFileError) {
       console.error("Error deleting image file:", deleteFileError.message);
       return NextResponse.json({ error: "Failed to delete image file" }, { status: 500 });
+    }
+
+    // Retrieve all products with a priority greater than the deleted product's priority
+    const { data: higherPriorityProducts, error: fetchHigherPriorityError } = await supabase
+      .from('Products')
+      .select('*')
+      .gt('priority', product.priority);
+
+    if (fetchHigherPriorityError) {
+      console.error("Error fetching higher priority products:", fetchHigherPriorityError.message);
+      return NextResponse.json({ error: "Failed to fetch products" }, { status: 500 });
+    }
+
+    // Decrease the priority of each product with a higher priority than the deleted product
+    if (higherPriorityProducts?.length > 0) {
+      const updatedProducts = higherPriorityProducts.map(p => ({
+        id: p.id,
+        priority: (parseInt(p.priority) - 1).toString(),
+      }));
+
+      const { error: updateError } = await supabase
+        .from('Products')
+        .upsert(updatedProducts);
+
+      if (updateError) {
+        console.error("Error updating product priorities:", updateError.message);
+        return NextResponse.json({ error: "Failed to update product priorities" }, { status: 500 });
+      }
     }
 
     // Delete product by ID from the PostgreSQL database
